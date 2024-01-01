@@ -1,11 +1,11 @@
-import { Box, IconButton, Typography } from "@mui/material";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
-import SearchBar from "../UI/SearchBar.tsx";
-import ProfileTab from "../UI/ProfileTab.tsx";
+import { Box, Typography } from "@mui/material";
 
-export default function MainHeader() {
+import { PropsWithChildren } from "react";
+import SearchBar from "../UI/SearchBar.tsx";
+
+type MainHeaderProps = PropsWithChildren;
+
+export default function MainHeader({ children }: MainHeaderProps) {
   return (
     <Box
       width="100%"
@@ -34,16 +34,7 @@ export default function MainHeader() {
         <Box display="flex" alignItems="center" width="35%">
           <SearchBar />
         </Box>
-        <IconButton onClick={() => {}}>
-          <HomeRoundedIcon fontSize="large" />
-        </IconButton>
-        <IconButton onClick={() => {}}>
-          <AddCircleRoundedIcon fontSize="large" />
-        </IconButton>
-        <IconButton onClick={() => {}}>
-          <NotificationsRoundedIcon fontSize="large" />
-        </IconButton>
-        <ProfileTab />
+        {children}
       </Box>
     </Box>
   );
