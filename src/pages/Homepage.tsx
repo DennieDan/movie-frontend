@@ -9,19 +9,22 @@ import { useState } from "react";
 import MyPagination from "../components/UI/MyPagination.tsx";
 import SortDropDown from "../components/UI/SortDropDown.tsx";
 import PostItem from "../components/UI/PostItem.tsx";
-import { useAppSelector } from "../store/hooks.ts";
-import { type PostItem as PostItemType } from "../store/posts-slice.ts";
-
-type SortByType = "start-date" | "movie" | "topic" | "most-votes";
+import { useAppDispatch, useAppSelector } from "../store/hooks.ts";
+import {
+  sortPostListDisplay,
+  type PostItem as PostItemType,
+} from "../store/posts-slice.ts";
 
 export default function Homepage() {
   const postList: PostItemType[] = useAppSelector(
     (state) => state.posts.itemsDisplay
   );
-  const [sortBy, setSortBy] = useState<SortByType>("start-date");
+  const dispatch = useAppDispatch();
+  const [sortBy, setSortBy] = useState<string>("start-date");
 
   const handleChange = (event: SelectChangeEvent) => {
-    setSortBy(event.target.value as SortByType);
+    setSortBy(event.target.value);
+    dispatch(sortPostListDisplay(event.target.value));
   };
 
   return (

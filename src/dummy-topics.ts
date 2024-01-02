@@ -1,4 +1,6 @@
-export const TOPICs = [
+import { type Topic } from "./store/topics-slice";
+
+export const TOPICS: Topic[] = [
   {
     id: 1,
     name: "review",

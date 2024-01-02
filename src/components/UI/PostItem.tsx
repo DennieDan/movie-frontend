@@ -58,7 +58,7 @@ export default function PostItem({ item }: PostItemProps) {
   }
   return (
     <ListItemButton>
-      <Vote value={item.votes} />
+      <Vote item={item} />
       <Box
         width="60%"
         display="flex"

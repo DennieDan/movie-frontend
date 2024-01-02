@@ -29,7 +29,7 @@ export const POSTS: PostItem[] = [
       "Souls itself is not the best movie for everyone, but it is a gift for anyone who is super duper alone.",
     content:
       "I watched Souls today with my girl friend and the title is what she told me after the film ended",
-    movie: "Souls",
+    movie: "Soul",
     topic: "",
     author: "runfaser",
     votes: 12,

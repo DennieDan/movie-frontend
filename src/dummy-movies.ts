@@ -1,5 +1,7 @@
+import { type Movie } from "./store/movies-slice";
+
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-export const MOVIES = [
+export const MOVIES: Movie[] = [
   { id: 1, title: "Once Upon a Time in the West", year: 1968 },
   { id: 2, title: "American History X", year: 1998 },
   { id: 3, title: "Interstellar", year: 2014 },
@@ -16,4 +18,7 @@ export const MOVIES = [
   { id: 14, title: "Cinema Paradiso", year: 1988 },
   { id: 15, title: "The Lives of Others", year: 2006 },
   { id: 16, title: "Grave of the Fireflies", year: 1988 },
+  { id: 17, title: "Jaws", year: 1975 },
+  { id: 18, title: "Home Alone", year: 1990 },
+  { id: 19, title: "Soul", year: 2020 },
 ];
