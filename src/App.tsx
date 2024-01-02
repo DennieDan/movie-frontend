@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   IconButton,
@@ -13,6 +14,8 @@ import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import { useState } from "react";
+import { Provider } from "react-redux";
+import { store } from "./store/store.ts";
 
 type UserType = "member" | "guest";
 
@@ -26,38 +29,42 @@ function App() {
     },
   });
   return (
-    <ThemeProvider theme={theme}>
-      <Stack direction="column" spacing={5}>
-        <MainHeader>
-          {user === "member" ? (
-            <>
-              <IconButton onClick={() => {}}>
-                <HomeRoundedIcon fontSize="large" />
-              </IconButton>
-              <IconButton onClick={() => {}}>
-                <AddCircleRoundedIcon fontSize="large" />
-              </IconButton>
-              <IconButton onClick={() => {}}>
-                <NotificationsRoundedIcon fontSize="large" />
-              </IconButton>
-              <ProfileTab />
-            </>
-          ) : (
-            <>
-              <Stack direction="row" spacing={2}>
-                <Button variant="outlined" size="large">
-                  Sign In
-                </Button>
-                <Button variant="outlined" size="large">
-                  Sign Up
-                </Button>
-              </Stack>
-            </>
-          )}
-        </MainHeader>
-        <Homepage />
-      </Stack>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <Stack direction="column" spacing={5}>
+          <MainHeader>
+            {user === "member" ? (
+              <>
+                <IconButton onClick={() => {}}>
+                  <HomeRoundedIcon fontSize="large" />
+                </IconButton>
+                <IconButton onClick={() => {}}>
+                  <AddCircleRoundedIcon fontSize="large" />
+                </IconButton>
+                <IconButton onClick={() => {}}>
+                  <Badge badgeContent={4} color="error">
+                    <NotificationsRoundedIcon fontSize="large" />
+                  </Badge>
+                </IconButton>
+                <ProfileTab />
+              </>
+            ) : (
+              <>
+                <Stack direction="row" spacing={2}>
+                  <Button variant="outlined" size="large">
+                    Sign In
+                  </Button>
+                  <Button variant="outlined" size="large">
+                    Sign Up
+                  </Button>
+                </Stack>
+              </>
+            )}
+          </MainHeader>
+          <Homepage />
+        </Stack>
+      </ThemeProvider>
+    </Provider>
   );
 }
 

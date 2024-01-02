@@ -6,28 +6,18 @@ import {
   Stack,
 } from "@mui/material";
 import { useState } from "react";
-import { POSTS } from "../dummy-posts.ts";
 import MyPagination from "../components/UI/MyPagination.tsx";
 import SortDropDown from "../components/UI/SortDropDown.tsx";
 import PostItem from "../components/UI/PostItem.tsx";
+import { useAppSelector } from "../store/hooks.ts";
 import { type PostItem as PostItemType } from "../store/posts-slice.ts";
 
 type SortByType = "start-date" | "movie" | "topic" | "most-votes";
 
-const post_1: PostItemType = {
-  id: 1,
-  title:
-    "Is Jaws worth watching 20 times?I was really shocked as I realised today was the twentieth time I have watched Jaws!I was really shocked as I realised today was the twentieth time I have watched Jaws!I was really shocked as I realised today was the twentieth time I have watched Jaws!I was really shocked as I realised today was the twentieth time I have watched Jaws!",
-  content:
-    "I was really shocked as I realised today was the twentieth time I have watched Jaws!",
-  movie: "Jaws",
-  topic: "review",
-  author: "Jona-10",
-  votes: 20,
-  created_at: "2023-12-26T13:51:50.417-07:00",
-};
-
 export default function Homepage() {
+  const postList: PostItemType[] = useAppSelector(
+    (state) => state.posts.itemsDisplay
+  );
   const [sortBy, setSortBy] = useState<SortByType>("start-date");
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -52,13 +42,13 @@ export default function Homepage() {
             <MenuItem value="most-votes">Most Votes</MenuItem>
           </SortDropDown>
         </Box>
-        {POSTS.map((post) => (
-          <>
-            <PostItem key={post.id} item={post} />
-            <Divider />
-          </>
-        ))}
-        <PostItem item={post_1} />
+        {postList?.length > 0 &&
+          postList?.map((post) => (
+            <>
+              <PostItem key={post.id} item={post} />
+              <Divider />
+            </>
+          ))}
       </Stack>
     </Box>
   );

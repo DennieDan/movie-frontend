@@ -3,7 +3,7 @@ import { postsSlice } from "./posts-slice.ts";
 
 export const store = configureStore({
   reducer: {
-    cart: postsSlice.reducer,
+    posts: postsSlice.reducer,
   },
 });
 

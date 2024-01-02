@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Divider,
   ListItemButton,
   ListItemProps,
   Typography,
@@ -24,7 +23,6 @@ type PostItemProps = {
 } & ListItemProps;
 
 export default function PostItem({ item }: PostItemProps) {
-  // const [createInterval, setCreateInterval] = useState(formatCreateInterval());
   function formatCreateInterval(): string {
     const inMiliSecond = new Date().getTime() - Date.parse(item.created_at);
     let res: string;
@@ -92,7 +90,6 @@ export default function PostItem({ item }: PostItemProps) {
               {item.author}
             </Typography>
             <Typography variant="caption" textAlign="left">
-              {/* {Date.parse(item.created_at)} */}
               {formatCreateInterval()}
             </Typography>
           </Box>

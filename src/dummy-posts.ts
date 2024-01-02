@@ -1,4 +1,6 @@
-export const POSTS = [
+import { type PostItem } from "./store/posts-slice";
+
+export const POSTS: PostItem[] = [
   {
     id: 1,
     title: "Is Jaws worth watching 20 times?",
