@@ -55,9 +55,7 @@ function App() {
             </>
           )}
         </MainHeader>
-        <Box width="100%" sx={{ backgroundColor: "white" }}>
-          <Homepage />
-        </Box>
+        <Homepage />
       </Stack>
     </ThemeProvider>
   );

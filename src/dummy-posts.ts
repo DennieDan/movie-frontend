@@ -27,8 +27,8 @@ export const POSTS = [
       "Souls itself is not the best movie for everyone, but it is a gift for anyone who is super duper alone.",
     content:
       "I watched Souls today with my girl friend and the title is what she told me after the film ended",
-    movie: "",
-    topic: "Souls",
+    movie: "Souls",
+    topic: "",
     author: "runfaser",
     votes: 12,
     created_at: "2023-11-30T13:51:50.417-07:00",
