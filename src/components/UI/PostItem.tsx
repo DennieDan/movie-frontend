@@ -1,61 +1,15 @@
-import {
-  Avatar,
-  Box,
-  ListItemButton,
-  ListItemProps,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, ListItemButton, Typography } from "@mui/material";
 import { type PostItem as PostItemType } from "../../store/posts-slice";
 import Vote from "./Vote.tsx";
 import TopicChip from "./TopicChip.tsx";
 import MovieTab from "./MovieTab.tsx";
-import {
-  ONE_DAY,
-  ONE_HOUR,
-  ONE_MINUTE,
-  ONE_MONTH,
-  ONE_WEEK,
-  ONE_YEAR,
-} from "../../constants.ts";
+import { formatCreateInterval } from "../../helpers/utils.ts";
 
 type PostItemProps = {
   item: PostItemType;
-} & ListItemProps;
+};
 
 export default function PostItem({ item }: PostItemProps) {
-  function formatCreateInterval(): string {
-    const inMiliSecond = new Date().getTime() - Date.parse(item.created_at);
-    let res: string;
-    let interval: number;
-    if (inMiliSecond > ONE_YEAR) {
-      interval = Math.ceil(inMiliSecond / ONE_YEAR);
-      res = interval.toString() + " year";
-    } else if (inMiliSecond > ONE_MONTH) {
-      interval = Math.ceil(inMiliSecond / ONE_MONTH);
-      res = interval.toString() + " month";
-    } else if (inMiliSecond > ONE_WEEK) {
-      interval = Math.ceil(inMiliSecond / ONE_WEEK);
-      res = interval.toString() + " week";
-    } else if (inMiliSecond > ONE_DAY) {
-      interval = Math.ceil(inMiliSecond / ONE_DAY);
-      res = interval.toString() + " day";
-    } else if (inMiliSecond > ONE_HOUR) {
-      interval = Math.ceil(inMiliSecond / ONE_HOUR);
-      res = interval.toString() + " hour";
-    } else if (inMiliSecond > ONE_MINUTE) {
-      interval = Math.ceil(inMiliSecond / ONE_MINUTE);
-      res = interval.toString() + " minute";
-    } else {
-      interval = 0;
-      res = "";
-    }
-
-    return res !== ""
-      ? interval > 1
-        ? res + "s ago"
-        : res + " ago"
-      : "Just now";
-  }
   return (
     <ListItemButton>
       <Vote item={item} />
@@ -90,7 +44,7 @@ export default function PostItem({ item }: PostItemProps) {
               {item.author}
             </Typography>
             <Typography variant="caption" textAlign="left">
-              {formatCreateInterval()}
+              {formatCreateInterval(item)}
             </Typography>
           </Box>
         </Box>

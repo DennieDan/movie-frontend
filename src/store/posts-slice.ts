@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { POSTS } from "../dummy-posts.ts";
-import { SearchOptionType, isTopicType } from "../components/UI/SearchBar.tsx";
+import { SearchOptionType, isTopicType } from "../helpers/utils.ts";
 
 export type PostItem = {
   id: number;
