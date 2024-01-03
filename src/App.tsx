@@ -30,9 +30,9 @@ const post_ex: PostItem = {
   content:
     "My big family intend to sit together every month, so I am finding activities for our bonding session. Do you think Home Alone is a good option for our family this month?",
   movie: "Home Alone",
-  topic: "ask",
   author: "fafaiu",
   votes: 3,
+  topic: "ask",
   created_at: "2024-01-01T13:51:50.417-07:00",
 };
 
@@ -49,6 +49,10 @@ function App() {
       h4: {
         textAlign: "left",
         fontWeight: 600,
+      },
+      subtitle1: {
+        color: "#82a9e8",
+        fontSize: 18,
       },
       subtitle2: {
         color: "#666967",

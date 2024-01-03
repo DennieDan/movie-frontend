@@ -2,7 +2,7 @@ import { Button, SvgIconTypeMap, Tooltip } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { ReactNode, useState } from "react";
 
-type ActionProps = {
+type ChangedActionProps = {
   FirstIcon: OverridableComponent<SvgIconTypeMap<object, "svg">> & {
     muiName: string;
   };
@@ -14,55 +14,81 @@ type ActionProps = {
   tooltip: string;
 };
 
-export default function Action({
-  FirstIcon,
-  SecondIcon,
-  firstName,
-  secondName,
-  tooltip,
-}: ActionProps) {
-  const [isCliked, setIsClicked] = useState<boolean>(false);
+type NonChangedActionProps = {
+  Icon: OverridableComponent<SvgIconTypeMap<object, "svg">> & {
+    muiName: string;
+  };
+  name: string;
+  onClick: () => void;
+};
 
-  function handleClick() {
-    setIsClicked(true);
-  }
+type ActionProps = ChangedActionProps | NonChangedActionProps;
 
-  function handleUnclick() {
-    setIsClicked(false);
-  }
-  // const GreyIcon = styled(BookmarkBorderOutlinedIcon)({
-  //   color: "grey",
-  // });
-  // const BlueIcon = styled(BookmarkIcon)({
-  //   color: "blue",
-  // });
+function isChangedActionProps(props): props is ChangedActionProps {
+  return "FirstIcon" in props;
+}
 
-  const nonClickedButton = (
-    <Button
-      id="profile-button"
-      startIcon={<FirstIcon />}
-      sx={{ color: "grey" }}
-      onClick={handleClick}
-      disableElevation
-      disableRipple
-    >
-      {firstName}
-    </Button>
-  );
+export default function Action(props: ActionProps) {
+  if (isChangedActionProps(props)) {
+    const { FirstIcon, SecondIcon, firstName, secondName, tooltip } = props;
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isCliked, setIsClicked] = useState<boolean>(false);
 
-  const clickedButton: ReactNode = (
-    <Tooltip title={tooltip} placement="bottom">
+    const handleClick = () => {
+      setIsClicked(true);
+    };
+
+    const handleUnclick = () => {
+      setIsClicked(false);
+    };
+    // const GreyIcon = styled(BookmarkBorderOutlinedIcon)({
+    //   color: "grey",
+    // });
+    // const BlueIcon = styled(BookmarkIcon)({
+    //   color: "blue",
+    // });
+
+    const nonClickedButton = (
       <Button
         id="profile-button"
-        startIcon={<SecondIcon />}
-        sx={{ color: "blue" }}
-        onClick={handleUnclick}
+        startIcon={<FirstIcon />}
+        sx={{ color: "grey" }}
+        onClick={handleClick}
         disableElevation
         disableRipple
       >
-        {secondName}
+        {firstName}
       </Button>
-    </Tooltip>
+    );
+
+    const clickedButton: ReactNode = (
+      <Tooltip title={tooltip} placement="bottom">
+        <Button
+          id="profile-button"
+          startIcon={<SecondIcon />}
+          sx={{ color: "blue" }}
+          onClick={handleUnclick}
+          disableElevation
+          disableRipple
+        >
+          {secondName}
+        </Button>
+      </Tooltip>
+    );
+    return <>{isCliked ? clickedButton : nonClickedButton}</>;
+  }
+
+  const { Icon, name, onClick } = props;
+  return (
+    <Button
+      id="profile-button"
+      startIcon={<Icon />}
+      sx={{ color: "blue" }}
+      disableElevation
+      disableRipple
+      onClick={onClick}
+    >
+      {name}
+    </Button>
   );
-  return <>{isCliked ? clickedButton : nonClickedButton}</>;
 }
