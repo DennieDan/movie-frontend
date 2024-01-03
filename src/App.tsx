@@ -1,9 +1,8 @@
 import {
   Badge,
-  Box,
   Button,
-  IconButton,
   Stack,
+  Theme,
   ThemeProvider,
   createTheme,
 } from "@mui/material";
@@ -19,6 +18,11 @@ import { store } from "./store/store.ts";
 import PostDetailpage from "./pages/PostDetailpage.tsx";
 import Homepage from "./pages/Homepage.tsx";
 import { PostItem } from "./store/posts-slice.ts";
+import RouteIcon from "./components/Navigation/RouteIcon.tsx";
+
+declare module "@mui/styles/defaultTheme" {
+  interface DefaultTheme extends Theme {}
+}
 
 const post_ex: PostItem = {
   id: 2,
@@ -37,7 +41,7 @@ type UserType = "member" | "guest";
 function App() {
   const [user, setUser] = useState<UserType>("member");
 
-  const theme = createTheme({
+  const theme: Theme = createTheme({
     typography: {
       button: {
         textTransform: "none",
@@ -54,6 +58,9 @@ function App() {
         fontSize: 18,
       },
     },
+    palette: {
+      common: { black: "#000", white: "#fff" },
+    },
   });
 
   return (
@@ -63,17 +70,17 @@ function App() {
           <MainHeader>
             {user === "member" ? (
               <>
-                <IconButton onClick={() => {}}>
+                <RouteIcon tooltip="Home">
                   <HomeRoundedIcon fontSize="large" />
-                </IconButton>
-                <IconButton onClick={() => {}}>
+                </RouteIcon>
+                <RouteIcon tooltip="Create post">
                   <AddCircleRoundedIcon fontSize="large" />
-                </IconButton>
-                <IconButton onClick={() => {}}>
+                </RouteIcon>
+                <RouteIcon tooltip="Notifications">
                   <Badge badgeContent={4} color="error">
                     <NotificationsRoundedIcon fontSize="large" />
                   </Badge>
-                </IconButton>
+                </RouteIcon>
                 <ProfileTab />
               </>
             ) : (
