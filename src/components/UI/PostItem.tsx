@@ -24,10 +24,10 @@ export default function PostItem({ item }: PostItemProps) {
         <Box display="flex" flexDirection="row" alignItems="center">
           <Typography variant="h6" textAlign="left" sx={{ fontWeight: "600" }}>
             {item.title}
-            {item.topic && <TopicChip name={item.topic} color="info" />}
+            {item.topic && <TopicChip name={item.topic} color="error" />}
           </Typography>
         </Box>
-        {item.movie && <MovieTab movie={item.movie} />}
+        <Box>{item.movie && <MovieTab movie={item.movie} />}</Box>
       </Box>
       <Box
         width="30%"

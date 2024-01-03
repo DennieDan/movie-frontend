@@ -7,12 +7,17 @@ type MovieTabProps = {
 export default function MovieTab({ movie }: MovieTabProps) {
   return (
     <Box
-      width="10%"
+      width="fit-content"
       display="flex"
       flexDirection="row"
       alignItems="center"
       justifyContent="center"
-      sx={{ borderRadius: "2px", borderColor: "grey.500", border: 2 }}
+      sx={{
+        borderRadius: "2px",
+        borderColor: "grey.500",
+        border: 1,
+        padding: "0px 2px",
+      }}
     >
       <Typography fontFamily="Roboto">{movie}</Typography>
     </Box>

@@ -82,22 +82,23 @@ export default function ProfileTab() {
     // </Button>
     <div>
       <Button
-        id="demo-customized-button"
+        id="profile-button"
         aria-controls={open ? "demo-customized-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         variant="contained"
-        disableElevation
         onClick={handleClick}
         startIcon={<Avatar sizes="small" />}
         endIcon={<KeyboardArrowDownRoundedIcon />}
+        disableElevation
+        disableRipple
       >
         Dan Dinh
       </Button>
       <StyledMenu
         id="demo-customized-menu"
         MenuListProps={{
-          "aria-labelledby": "demo-customized-button",
+          "aria-labelledby": "profile-button",
         }}
         anchorEl={anchorEl}
         open={open}
