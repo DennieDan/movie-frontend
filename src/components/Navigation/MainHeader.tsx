@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 import { PropsWithChildren } from "react";
 import SearchBar from "../UI/SearchBar.tsx";
@@ -21,15 +21,17 @@ export default function MainHeader({ children }: MainHeaderProps) {
         alignItems="center"
       >
         <Box display="flex" alignItems="center">
-          <Typography
-            align="center"
-            variant="h5"
-            color="blue"
-            fontFamily="Arial"
-            fontWeight="700"
-          >
-            Movie Hub
-          </Typography>
+          <Button href="/">
+            <Typography
+              align="center"
+              variant="h5"
+              color="blue"
+              fontFamily="Arial"
+              fontWeight="700"
+            >
+              Movie Hub
+            </Typography>
+          </Button>
         </Box>
         <Box display="flex" alignItems="center" width="35%">
           <SearchBar />

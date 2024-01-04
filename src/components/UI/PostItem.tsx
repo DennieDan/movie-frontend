@@ -11,7 +11,7 @@ type PostItemProps = {
 
 export default function PostItem({ item }: PostItemProps) {
   return (
-    <ListItemButton>
+    <ListItemButton href={`posts/${item.id}`}>
       <Vote item={item} />
       <Box
         width="60%"

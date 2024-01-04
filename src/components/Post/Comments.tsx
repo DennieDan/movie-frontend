@@ -6,16 +6,21 @@ import {
 } from "../../store/comments-slice.ts";
 import { useAppDispatch, useAppSelector } from "../../store/hooks.ts";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import { type PostItem as PostItemType } from "../../store/posts-slice.ts";
 
-export default function Comments() {
-  const comments: CommentItemType[] = useAppSelector(
-    (state) => state.comments.items
-  );
+type CommentsProps = {
+  item: PostItemType;
+};
 
-  // use later when we have id route
+export default function Comments({ item }: CommentsProps) {
   // const comments: CommentItemType[] = useAppSelector(
   //   (state) => state.comments.items
-  // ).filter(c => c.post_id === id);
+  // );
+
+  // use later when we have id route
+  const comments: CommentItemType[] = useAppSelector(
+    (state) => state.comments.items
+  ).filter((c) => c.post_id === item.id);
 
   return (
     <Box
@@ -38,13 +43,13 @@ export default function Comments() {
         <Typography variant="body1">Comment as</Typography>
         <Typography variant="subtitle1"> Dan Dinh</Typography>
       </Stack>
-      <CommentInput />
+      <CommentInput post={item} />
       <hr style={{ width: "100%", marginTop: "50px" }}></hr>
       <Stack direction="column" spacing={5}>
         {comments.map(
           (comment) =>
             comment.reply_to === undefined && (
-              <CommentItem key={comment.id} item={comment} />
+              <CommentItem key={comment.id} post={item} item={comment} />
             )
         )}
       </Stack>
@@ -53,10 +58,11 @@ export default function Comments() {
 }
 
 type CommentItemProps = {
+  post: PostItemType;
   item: CommentItemType;
 };
 
-function CommentItem({ item }: CommentItemProps) {
+function CommentItem({ post, item }: CommentItemProps) {
   const [isReplying, setIsReplying] = useState<boolean>(false);
   const comments: CommentItemType[] = useAppSelector(
     (state) => state.comments.items
@@ -84,10 +90,14 @@ function CommentItem({ item }: CommentItemProps) {
         </Button>
       </Stack>
       {isReplying && (
-        <CommentInput item={item} onReply={() => setIsReplying(false)} />
+        <CommentInput
+          post={post}
+          item={item}
+          onReply={() => setIsReplying(false)}
+        />
       )}
       {replies.map((reply) => (
-        <CommentItem item={reply} />
+        <CommentItem key={reply.id} post={post} item={reply} />
       ))}
     </Box>
   );
@@ -95,9 +105,11 @@ function CommentItem({ item }: CommentItemProps) {
 
 type PostCommentInputProps = {
   item?: never;
+  post: PostItemType;
 };
 
 type ReplyInputProps = {
+  post: PostItemType;
   item: CommentItemType;
   onReply: () => void;
 };
@@ -113,10 +125,10 @@ function CommentInput(props: CommentInputProps) {
   const [commentBody, setCommentBody] = useState<string>("");
   const dispatch = useAppDispatch();
 
-  const { item } = props;
+  const { post, item } = props;
   function handleComment() {
     const newComment = {
-      post_id: 2,
+      post_id: post.id,
       reply_to: item?.id,
       body: commentBody,
       comments: [],

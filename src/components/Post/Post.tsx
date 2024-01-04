@@ -46,7 +46,7 @@ export default function Post({ item }: PostProps) {
             justifyContent="flex-start"
             flexGrow={10}
           >
-            <MovieTab movie={item.movie} />
+            {item.movie && <MovieTab movie={item.movie} />}
             <Typography variant="subtitle2">
               Posted by {item.author} {formatCreateInterval(item)}
             </Typography>
@@ -70,7 +70,7 @@ export default function Post({ item }: PostProps) {
               alignItems="center"
               justifyContent="flex-start"
             >
-              <TopicChip name={item.topic} color="success" />
+              {item.topic && <TopicChip name={item.topic} color="success" />}
             </Box>
             <Typography variant="body1">{item.content}</Typography>
           </Box>

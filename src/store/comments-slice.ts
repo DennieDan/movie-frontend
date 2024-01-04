@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { COMMENTS } from "../dummy-comments.ts";
 
-let currentId: number = 3;
+let currentId: number = 9;
 
 export type CommentItem =
   | {
