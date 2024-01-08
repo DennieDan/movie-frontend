@@ -1,11 +1,13 @@
 import {
   Box,
+  CircularProgress,
   Divider,
   MenuItem,
   SelectChangeEvent,
   Stack,
+  Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyPagination from "../components/UI/MyPagination.tsx";
 import SortDropDown from "../components/UI/SortDropDown.tsx";
 import PostItem from "../components/UI/PostItem.tsx";
@@ -13,21 +15,33 @@ import { useAppDispatch, useAppSelector } from "../store/hooks.ts";
 import {
   sortPostListDisplay,
   type PostItem as PostItemType,
+  selectDisplayPosts,
+  getPostsStatus,
+  getPostsError,
+  fetchPosts,
 } from "../store/posts-slice.ts";
 
 export default function Homepage() {
-  const postList: PostItemType[] = useAppSelector(
-    (state) => state.posts.itemsDisplay
-  );
+  const postList: PostItemType[] = useAppSelector(selectDisplayPosts);
+  const postStatus = useAppSelector(getPostsStatus);
+  const postError = useAppSelector(getPostsError);
+
+  // const postList: PostItemType[] = useAppSelector(() => selectDisplayPosts());
   const dispatch = useAppDispatch();
   const [sortBy, setSortBy] = useState<string>("start-date");
+
+  useEffect(() => {
+    if (postStatus === "idle") {
+      dispatch(fetchPosts());
+    }
+  }, [postStatus, dispatch]);
 
   const handleChange = (event: SelectChangeEvent) => {
     setSortBy(event.target.value);
     dispatch(sortPostListDisplay(event.target.value));
   };
 
-  return (
+  const postContent = (
     <Box sx={{ backgroundColor: "white", borderRadius: "5px" }}>
       <Stack direction="column">
         <Box
@@ -45,14 +59,38 @@ export default function Homepage() {
             <MenuItem value="most-votes">Most Votes</MenuItem>
           </SortDropDown>
         </Box>
-        {postList?.length > 0 &&
+
+        {postError ? (
+          <Typography>Error: {postError}</Typography>
+        ) : (
+          // (
+          //   <div>{postList[0].title}</div>
+          // )
+          postList?.length > 0 &&
           postList?.map((post) => (
             <>
               <PostItem key={post.id} item={post} />
               <Divider />
             </>
-          ))}
+          ))
+        )}
       </Stack>
     </Box>
   );
+
+  const content =
+    postStatus === "loading" ? (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <CircularProgress />
+      </Box>
+    ) : (
+      postContent
+    );
+
+  return content;
 }
