@@ -23,6 +23,7 @@ import {
 
 export default function Homepage() {
   const postList: PostItemType[] = useAppSelector(selectDisplayPosts);
+  console.log(postList);
   const postStatus = useAppSelector(getPostsStatus);
   const postError = useAppSelector(getPostsError);
 

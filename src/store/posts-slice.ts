@@ -24,8 +24,8 @@ type PostsState = {
 };
 
 const initialState: PostsState = {
-  posts: POSTS,
-  postsDisplay: POSTS,
+  posts: [],
+  postsDisplay: [],
   status: "idle",
   error: null,
 };
