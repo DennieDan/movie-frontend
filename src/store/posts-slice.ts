@@ -1,5 +1,4 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { POSTS } from "../dummy-posts.ts";
 import { SearchOptionType, isTopicType } from "../helpers/utils.ts";
 import { get } from "../helpers/http.ts";
 

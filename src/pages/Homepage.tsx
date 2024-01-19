@@ -43,7 +43,7 @@ export default function Homepage() {
   };
 
   const postContent = (
-    <Box sx={{ backgroundColor: "white", borderRadius: "5px" }}>
+    <Box width="100%" sx={{ backgroundColor: "white", borderRadius: "5px" }}>
       <Stack direction="column">
         <Box
           display="flex"
@@ -82,6 +82,7 @@ export default function Homepage() {
   const content =
     postStatus === "loading" ? (
       <Box
+        width="100%"
         display="flex"
         flexDirection="column"
         alignItems="center"
