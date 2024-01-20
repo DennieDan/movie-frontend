@@ -56,7 +56,11 @@ const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
-export default function ProfileTab() {
+type ProfileTabProps = {
+  username: string;
+};
+
+export default function ProfileTab({ username }: ProfileTabProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -93,7 +97,7 @@ export default function ProfileTab() {
         disableElevation
         disableRipple
       >
-        Dan Dinh
+        {username}
       </Button>
       <StyledMenu
         id="demo-customized-menu"

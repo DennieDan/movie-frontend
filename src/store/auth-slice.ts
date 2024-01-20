@@ -47,6 +47,7 @@ export const loginUser = createAsyncThunk(
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
+      credentials: "include",
     });
 
     const data = (await response.json()) as RawLoginPost;
@@ -56,9 +57,28 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const validateUser = createAsyncThunk("user/Validate", async () => {
+  console.log("co run validateUser1");
+
+  const response = await fetch(`${END_POINT}/api/validate`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  console.log("co run validateUser2");
+
+  const data = (await response.json()) as RawLoginPost;
+  console.log("co run validateUser");
+
+  return data;
+});
+
 export const getUserError = (state) => state.user.error;
 export const getUserStatus = (state) => state.user.status;
 export const getUserMessage = (state) => state.user.msg;
+export const getAuthUser = (state) => state.user.user;
 
 export const authSlice = createSlice({
   name: "user",
@@ -66,7 +86,7 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(loginUser.pending, (state, action) => {
+      .addCase(loginUser.pending, (state) => {
         state.status = "loading";
       })
       .addCase(loginUser.fulfilled, (state, action) => {
@@ -86,6 +106,30 @@ export const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(validateUser.pending, (state) => {
+        state.status = "loading";
+        console.log("validate:loading");
+      })
+      .addCase(validateUser.fulfilled, (state, action) => {
+        if (action.payload.error) {
+          state.error = action.payload.error;
+          state.status = "failed";
+          state.msg = "";
+        } else {
+          state.status = "succeeded";
+          state.user = action.payload.user;
+          state.msg = action.payload.message;
+          state.error = "";
+          localStorage.setItem("user", JSON.stringify(action.payload.user));
+          console.log("Infulfilled" + action.payload.user);
+        }
+      })
+      .addCase(validateUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+        console.log("validate:failed");
+        console.log(state.error);
       });
   },
 });

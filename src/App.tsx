@@ -9,16 +9,31 @@ import ProfileTab from "./components/UI/ProfileTab.tsx";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect } from "react";
 import LoginPage from "./pages/LoginPage.tsx";
-
-type UserType = "member" | "guest";
+import { useAppDispatch, useAppSelector } from "./store/hooks.ts";
+import {
+  UserItem,
+  getAuthUser,
+  getUserStatus,
+  validateUser,
+} from "./store/auth-slice.ts";
 
 const Header: FunctionComponent = () => {
-  const [user, setUser] = useState<UserType>("member");
+  const dispatch = useAppDispatch();
+  const authStatus = useAppSelector(getUserStatus);
+  const authUser = useAppSelector(getAuthUser) as UserItem;
+
+  useEffect(() => {
+    if (authStatus == "idle") {
+      console.log("idle");
+      dispatch(validateUser());
+    }
+  }, [authStatus, dispatch]);
+  console.log("In header" + authUser);
   return (
     <MainHeader>
-      {user === "member" ? (
+      {authStatus === "succeeded" ? (
         <>
           <RouteIcon tooltip="Home">
             <HomeRoundedIcon fontSize="large" />
@@ -31,7 +46,7 @@ const Header: FunctionComponent = () => {
               <NotificationsRoundedIcon fontSize="large" />
             </Badge>
           </RouteIcon>
-          <ProfileTab />
+          <ProfileTab username={authUser.username} />
         </>
       ) : (
         <>

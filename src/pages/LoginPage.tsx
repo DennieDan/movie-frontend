@@ -97,7 +97,7 @@ export default function LoginPage() {
               label="Password"
               type="password"
               {...register("password", { required: "Password is required" })}
-              error={!!errors.password || !!loginError}
+              error={!!errors.password || loginError !== ""}
               helperText={errors.password?.message || loginError}
             />
             <MyButton type="submit">SIGN IN</MyButton>
