@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { getUserError, loginUser } from "../store/auth-slice.ts";
+import { useRef } from "react";
 
 type LoginFormValues = {
   username: string;
@@ -21,6 +22,7 @@ export default function LoginPage() {
       password: "",
     },
   });
+  const formControl = useRef<HTMLFormElement>(null);
 
   const { register, handleSubmit, formState, control } = form;
   const { errors } = formState;
@@ -28,6 +30,7 @@ export default function LoginPage() {
   function onSubmit(data: LoginFormValues) {
     console.log(data);
     dispatch(loginUser(data));
+    formControl.current.reset();
   }
 
   return (
@@ -70,6 +73,7 @@ export default function LoginPage() {
           justifyContent="space-between"
           noValidate
           onSubmit={handleSubmit(onSubmit)}
+          ref={formControl}
         >
           <Stack direction="column" spacing={5}>
             <MyInput
