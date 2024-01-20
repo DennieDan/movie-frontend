@@ -6,6 +6,7 @@ import { DevTool } from "@hookform/devtools";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { getUserError, loginUser } from "../store/auth-slice.ts";
 import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 type LoginFormValues = {
   username: string;
@@ -26,11 +27,13 @@ export default function LoginPage() {
 
   const { register, handleSubmit, formState, control } = form;
   const { errors } = formState;
+  const navigate = useNavigate();
 
   function onSubmit(data: LoginFormValues) {
     console.log(data);
     dispatch(loginUser(data));
     formControl.current.reset();
+    navigate("/");
   }
 
   return (
