@@ -18,6 +18,7 @@ import {
   getUserStatus,
   validateUser,
 } from "./store/auth-slice.ts";
+import RegisterPage from "./pages/RegisterPage.tsx";
 
 const Header: FunctionComponent = () => {
   const dispatch = useAppDispatch();
@@ -26,11 +27,9 @@ const Header: FunctionComponent = () => {
 
   useEffect(() => {
     if (authStatus == "idle") {
-      console.log("idle");
       dispatch(validateUser());
     }
   }, [authStatus, dispatch]);
-  console.log("In header" + authUser);
   return (
     <MainHeader>
       {authStatus === "succeeded" ? (
@@ -81,6 +80,10 @@ const Router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
+      },
+      {
+        path: "register",
+        element: <RegisterPage />,
       },
       {
         path: "posts/:id",

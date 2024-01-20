@@ -4,8 +4,7 @@ import MyButton from "../components/UI/MyButton";
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { getUserError, loginUser } from "../store/auth-slice.ts";
-import { useRef } from "react";
+import { getUserError, getUserStatus, loginUser } from "../store/auth-slice.ts";
 import { useNavigate } from "react-router-dom";
 
 type LoginFormValues = {
@@ -16,6 +15,7 @@ type LoginFormValues = {
 export default function LoginPage() {
   const dispatch = useAppDispatch();
   const loginError = useAppSelector(getUserError);
+  const loginStatus = useAppSelector(getUserStatus);
   // const loginMessage = useAppSelector(getUserMessage);
   const form = useForm<LoginFormValues>({
     defaultValues: {
@@ -23,17 +23,17 @@ export default function LoginPage() {
       password: "",
     },
   });
-  const formControl = useRef<HTMLFormElement>(null);
+  // const formControl = useRef<HTMLFormElement>(null);
 
   const { register, handleSubmit, formState, control } = form;
   const { errors } = formState;
   const navigate = useNavigate();
 
-  function onSubmit(data: LoginFormValues) {
-    console.log(data);
-    dispatch(loginUser(data));
-    formControl.current.reset();
-    navigate("/");
+  async function onSubmit(data: LoginFormValues) {
+    await dispatch(loginUser(data));
+    if (loginStatus === "idle") {
+      navigate("/");
+    }
   }
 
   return (
@@ -76,7 +76,6 @@ export default function LoginPage() {
           justifyContent="space-between"
           noValidate
           onSubmit={handleSubmit(onSubmit)}
-          ref={formControl}
         >
           <Stack direction="column" spacing={5}>
             <MyInput
@@ -97,7 +96,10 @@ export default function LoginPage() {
               label="Password"
               type="password"
               {...register("password", { required: "Password is required" })}
-              error={!!errors.password || loginError !== ""}
+              error={
+                !!errors.password ||
+                new RegExp(".*password.*", "i").test(loginError)
+              }
               helperText={errors.password?.message || loginError}
             />
             <MyButton type="submit">SIGN IN</MyButton>

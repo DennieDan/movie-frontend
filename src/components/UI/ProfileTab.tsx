@@ -12,6 +12,8 @@ import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownR
 import FolderSharedRoundedIcon from "@mui/icons-material/FolderSharedRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { useState } from "react";
+import { useAppDispatch } from "../../store/hooks";
+import { logoutUser } from "../../store/auth-slice";
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -61,6 +63,8 @@ type ProfileTabProps = {
 };
 
 export default function ProfileTab({ username }: ProfileTabProps) {
+  const dispatch = useAppDispatch();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -68,6 +72,11 @@ export default function ProfileTab({ username }: ProfileTabProps) {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    console.log("handle logout");
+    dispatch(logoutUser());
   };
   return (
     // <Button variant="outlined" size="large">
@@ -113,7 +122,7 @@ export default function ProfileTab({ username }: ProfileTabProps) {
           My Profile
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={handleLogout} disableRipple>
           <LogoutRoundedIcon />
           Sign out
         </MenuItem>

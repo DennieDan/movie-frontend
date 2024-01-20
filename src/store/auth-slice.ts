@@ -38,11 +38,28 @@ type RawLoginPost = {
   user?: UserItem;
 };
 
+export const registerUser = createAsyncThunk(
+  "user/Register",
+  async (body: { username: string; email: string; password: string }) => {
+    const response = await fetch(`${END_POINT}/api/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = (await response.json()) as RawLoginPost;
+
+    return data;
+  }
+);
+
 export const loginUser = createAsyncThunk(
   "user/Login",
   async (body: { username: string; password: string }) => {
     const response = await fetch(`${END_POINT}/api/login`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -51,15 +68,12 @@ export const loginUser = createAsyncThunk(
     });
 
     const data = (await response.json()) as RawLoginPost;
-    console.log(data);
 
     return data;
   }
 );
 
 export const validateUser = createAsyncThunk("user/Validate", async () => {
-  console.log("co run validateUser1");
-
   const response = await fetch(`${END_POINT}/api/validate`, {
     method: "GET",
     headers: {
@@ -67,10 +81,23 @@ export const validateUser = createAsyncThunk("user/Validate", async () => {
     },
     credentials: "include",
   });
-  console.log("co run validateUser2");
 
   const data = (await response.json()) as RawLoginPost;
-  console.log("co run validateUser");
+
+  return data;
+});
+
+export const logoutUser = createAsyncThunk("user/Logout", async () => {
+  console.log("redux logout");
+  const response = await fetch(`${END_POINT}/api/logout`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const data = (await response.json()) as RawLoginPost;
 
   return data;
 });
@@ -109,7 +136,6 @@ export const authSlice = createSlice({
       })
       .addCase(validateUser.pending, (state) => {
         state.status = "loading";
-        console.log("validate:loading");
       })
       .addCase(validateUser.fulfilled, (state, action) => {
         if (action.payload.error) {
@@ -122,14 +148,24 @@ export const authSlice = createSlice({
           state.msg = action.payload.message;
           state.error = "";
           localStorage.setItem("user", JSON.stringify(action.payload.user));
-          console.log("Infulfilled" + action.payload.user);
         }
       })
       .addCase(validateUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-        console.log("validate:failed");
-        console.log(state.error);
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        if (action.payload.error) {
+          state.error = action.payload.error;
+          state.status = "failed";
+          state.msg = "";
+        } else {
+          state = initialState;
+          localStorage.removeItem("user");
+        }
       });
   },
 });
