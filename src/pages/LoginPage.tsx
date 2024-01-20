@@ -3,7 +3,8 @@ import MyInput from "../components/UI/MyInput";
 import MyButton from "../components/UI/MyButton";
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
-import { useRef } from "react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { getUserError, loginUser } from "../store/auth-slice.ts";
 
 type LoginFormValues = {
   username: string;
@@ -11,6 +12,9 @@ type LoginFormValues = {
 };
 
 export default function LoginPage() {
+  const dispatch = useAppDispatch();
+  const loginError = useAppSelector(getUserError);
+  // const loginMessage = useAppSelector(getUserMessage);
   const form = useForm<LoginFormValues>({
     defaultValues: {
       username: "",
@@ -20,11 +24,10 @@ export default function LoginPage() {
 
   const { register, handleSubmit, formState, control } = form;
   const { errors } = formState;
-  const formObject = useRef<HTMLFormElement>(null);
 
   function onSubmit(data: LoginFormValues) {
     console.log(data);
-    formObject.current.reset();
+    dispatch(loginUser(data));
   }
 
   return (
@@ -51,7 +54,7 @@ export default function LoginPage() {
         <Typography variant="h3">Sign in</Typography>
         <Stack direction="row" spacing={1}>
           <Typography>Doesn't have an account yet?</Typography>
-          <Link href="/signup">
+          <Link href="/register">
             <Typography
               sx={{ color: "primary.main", textDecoration: "underline" }}
             >
@@ -67,23 +70,28 @@ export default function LoginPage() {
           justifyContent="space-between"
           noValidate
           onSubmit={handleSubmit(onSubmit)}
-          ref={formObject}
         >
           <Stack direction="column" spacing={5}>
             <MyInput
               id="login-username"
               label="Username"
               {...register("username", { required: "Username is required" })}
-              error={!!errors.username}
-              helperText={errors.username?.message}
+              error={
+                !!errors.username ||
+                loginError === "Invalid username or password"
+              }
+              helperText={
+                errors.username?.message ||
+                loginError === "Invalid username or password"
+              }
             />
             <MyInput
               id="login-password"
               label="Password"
               type="password"
               {...register("password", { required: "Password is required" })}
-              error={!!errors.password}
-              helperText={errors.password?.message}
+              error={!!errors.password || !!loginError}
+              helperText={errors.password?.message || loginError}
             />
             <MyButton type="submit">SIGN IN</MyButton>
           </Stack>
