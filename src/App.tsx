@@ -9,7 +9,7 @@ import ProfileTab from "./components/UI/ProfileTab.tsx";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import LoginPage from "./pages/LoginPage.tsx";
 import { useAppDispatch, useAppSelector } from "./store/hooks.ts";
 import {
@@ -19,28 +19,39 @@ import {
   validateUser,
 } from "./store/auth-slice.ts";
 import RegisterPage from "./pages/RegisterPage.tsx";
+import CreatePostModal from "./components/Post/CreatePostModal.tsx";
 
 const Header: FunctionComponent = () => {
   const dispatch = useAppDispatch();
   const authStatus = useAppSelector(getUserStatus);
   const authUser = useAppSelector(getAuthUser) as UserItem;
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (authStatus == "idle") {
       dispatch(validateUser());
     }
   }, [authStatus, dispatch]);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <MainHeader>
       {authStatus === "succeeded" ? (
         <>
-          <RouteIcon tooltip="Home">
+          <RouteIcon tooltip="Home" onClick={() => {}}>
             <HomeRoundedIcon fontSize="large" />
           </RouteIcon>
-          <RouteIcon tooltip="Create post">
+          <RouteIcon tooltip="Create post" onClick={handleClickOpen}>
             <AddCircleRoundedIcon fontSize="large" />
           </RouteIcon>
-          <RouteIcon tooltip="Notifications">
+          <RouteIcon tooltip="Notifications" onClick={() => {}}>
             <Badge badgeContent={4} color="error">
               <NotificationsRoundedIcon fontSize="large" />
             </Badge>
@@ -59,6 +70,7 @@ const Header: FunctionComponent = () => {
           </Stack>
         </>
       )}
+      <CreatePostModal open={open} onClose={handleClose} />
     </MainHeader>
   );
 };

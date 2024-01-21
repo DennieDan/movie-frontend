@@ -10,6 +10,7 @@ import { ReactNode } from "react";
 type RouteIconProps = {
   children: ReactNode;
   tooltip: string;
+  onClick: () => void;
 };
 
 const BootstrapTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -24,10 +25,14 @@ const BootstrapTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-export default function RouteIcon({ children, tooltip }: RouteIconProps) {
+export default function RouteIcon({
+  children,
+  tooltip,
+  onClick,
+}: RouteIconProps) {
   return (
     <BootstrapTooltip title={tooltip} placement="bottom">
-      <IconButton onClick={() => {}}>{children}</IconButton>
+      <IconButton onClick={onClick}>{children}</IconButton>
     </BootstrapTooltip>
   );
 }
