@@ -28,6 +28,7 @@ import { getAuthUser } from "../../store/auth-slice.ts";
 type CreatePostModalProps = {
   open: boolean;
   onClose: () => void;
+  onOpenAlert: () => void;
 };
 
 type CreatePostFormValues = {
@@ -46,6 +47,7 @@ type CreatePostReturnType = {
 export default function CreatePostModal({
   open,
   onClose,
+  onOpenAlert,
 }: CreatePostModalProps) {
   const dispatch = useAppDispatch();
   const [createPostError, setCreatePostError] = useState<string>("");
@@ -80,6 +82,7 @@ export default function CreatePostModal({
       formControl.current.reset();
       navigate("/");
       onClose();
+      onOpenAlert();
     }
   }
 

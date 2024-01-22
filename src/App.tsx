@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Root from "./pages/Root.tsx";
 import PostDetailPage from "./pages/PostDetailPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
-import { Badge, Stack, Button } from "@mui/material";
+import { Badge, Stack, Button, Snackbar, Alert } from "@mui/material";
 import MainHeader from "./components/Navigation/MainHeader.tsx";
 import RouteIcon from "./components/Navigation/RouteIcon.tsx";
 import ProfileTab from "./components/UI/ProfileTab.tsx";
@@ -26,6 +26,7 @@ const Header: FunctionComponent = () => {
   const authStatus = useAppSelector(getUserStatus);
   const authUser = useAppSelector(getAuthUser) as UserItem;
   const [open, setOpen] = useState<boolean>(false);
+  const [alert, setAlert] = useState<boolean>(false);
 
   useEffect(() => {
     if (authStatus == "idle") {
@@ -39,6 +40,14 @@ const Header: FunctionComponent = () => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleOpenAlert = () => {
+    setAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setAlert(false);
   };
 
   return (
@@ -70,7 +79,21 @@ const Header: FunctionComponent = () => {
           </Stack>
         </>
       )}
-      <CreatePostModal open={open} onClose={handleClose} />
+      <CreatePostModal
+        open={open}
+        onClose={handleClose}
+        onOpenAlert={handleOpenAlert}
+      />
+      <Snackbar open={alert} autoHideDuration={5000} onClose={handleCloseAlert}>
+        <Alert
+          onClose={handleCloseAlert}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Post created successfully
+        </Alert>
+      </Snackbar>
     </MainHeader>
   );
 };
