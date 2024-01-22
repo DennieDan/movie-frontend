@@ -1,6 +1,5 @@
 import {
   Autocomplete,
-  AutocompleteRenderInputParams,
   Box,
   Button,
   Dialog,
@@ -13,7 +12,6 @@ import {
   TextField,
 } from "@mui/material";
 import MyInput from "../UI/MyInput.tsx";
-import { ReactNode, Ref, useState } from "react";
 import { type Movie as MovieType } from "../../store/movies-slice.ts";
 import { MOVIES } from "../../dummy-movies";
 import { type Topic as TopicType } from "../../store/topics-slice.ts";
@@ -21,6 +19,11 @@ import { TOPICS } from "../../dummy-topics.ts";
 import CloseIcon from "@mui/icons-material/Close";
 import { Controller, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
+import { PostItem, createPost } from "../../store/posts-slice.ts";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/hooks.ts";
+import { getAuthUser } from "../../store/auth-slice.ts";
 
 type CreatePostModalProps = {
   open: boolean;
@@ -30,17 +33,24 @@ type CreatePostModalProps = {
 type CreatePostFormValues = {
   title: string;
   content: string;
-  movie_id: number;
-  topic_id: number;
+  movie_id: number | null;
+  topic_id: number | null;
+};
+
+type CreatePostReturnType = {
+  error?: string;
+  message?: string;
+  post?: PostItem;
 };
 
 export default function CreatePostModal({
   open,
   onClose,
 }: CreatePostModalProps) {
-  // const [movie, setMovie] = useState<MovieType>(null);
+  const dispatch = useAppDispatch();
+  const [createPostError, setCreatePostError] = useState<string>("");
+  const authUser = useAppSelector(getAuthUser);
   const movieOptions: MovieType[] = MOVIES;
-  // const [topic, setTopic] = useState<TopicType>(null);
   const topicOptions: TopicType[] = TOPICS;
 
   const form = useForm<CreatePostFormValues>({
@@ -54,22 +64,23 @@ export default function CreatePostModal({
 
   const { register, handleSubmit, formState, control } = form;
   const { errors } = formState;
+  const navigate = useNavigate();
 
-  // function handleChangeMovie(_: unknown, value: MovieType): void {
-  //   setMovie(value);
-  // }
-
-  // function handleChangeTopic(_: unknown, value: TopicType): void {
-  //   setTopic(value);
-  // }
-
-  function handleCreatePost() {
-    onClose();
-  }
+  const formControl = useRef<HTMLFormElement>(null);
 
   async function onSubmit(data: CreatePostFormValues) {
-    // await dispatch(loginUser(data));
-    await console.log(data);
+    console.log({ ...data, author_id: authUser.id });
+    // await createPost({ ...data, author_id: authUser.id });
+    const response = (await dispatch(
+      createPost({ ...data, author_id: authUser.id })
+    )) as CreatePostReturnType;
+    setCreatePostError(response.error);
+    console.log(createPostError);
+    if (createPostError === "") {
+      formControl.current.reset();
+      navigate("/");
+      onClose();
+    }
   }
 
   return (
@@ -97,6 +108,7 @@ export default function CreatePostModal({
             margin={2}
             noValidate
             onSubmit={handleSubmit(onSubmit)}
+            ref={formControl}
           >
             <MyInput
               id="create-post-title"

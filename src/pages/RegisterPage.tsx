@@ -21,7 +21,7 @@ type RegisterReturnType = {
 };
 
 export default function RegisterPage() {
-  const [registerError, setRegisterError] = useState<string>("red");
+  const [registerError, setRegisterError] = useState<string>("");
   const form = useForm<RegisterFormValues>({
     defaultValues: {
       username: "",

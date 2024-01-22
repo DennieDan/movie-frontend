@@ -30,12 +30,13 @@ export default function Homepage() {
   // const postList: PostItemType[] = useAppSelector(() => selectDisplayPosts());
   const dispatch = useAppDispatch();
   const [sortBy, setSortBy] = useState<string>("start-date");
+  console.log("1" + postStatus);
 
   useEffect(() => {
     if (postStatus === "idle") {
       dispatch(fetchPosts());
     }
-  }, [postStatus, dispatch]);
+  }, [postStatus, dispatch, postList]);
 
   const handleChange = (event: SelectChangeEvent) => {
     setSortBy(event.target.value);

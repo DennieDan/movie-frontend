@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { SearchOptionType, isTopicType } from "../helpers/utils.ts";
 import { get } from "../helpers/http.ts";
+import { END_POINT } from "../constants.ts";
 
 export type PostItem = {
   id: number;
@@ -40,6 +41,12 @@ type RawDataPost = {
   updated_at: string;
 };
 
+type CreatePostReturnType = {
+  error?: string;
+  message?: string;
+  post?: PostItem;
+};
+
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const response = await get("http://localhost:3000/api/posts");
 
@@ -60,6 +67,29 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
 
   return posts as PostItem[];
 });
+
+export const createPost = createAsyncThunk(
+  "posts/createPost",
+  async (body: {
+    title: string;
+    content: string;
+    movie_id: number | null;
+    topic_id: number | null;
+    author_id: number;
+  }) => {
+    const response = await fetch(`${END_POINT}/api/create_post`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = (await response.json()) as CreatePostReturnType;
+    return data;
+  }
+);
+
 // selector functions
 export const selectDisplayPosts = (state) => state.posts.postsDisplay;
 export const getPostsError = (state) => state.posts.error;
@@ -109,7 +139,6 @@ export const postsSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
-    createAPost(state, action) {},
     editAPost(state, action) {},
     deleteAPost(state, action) {},
     searchPostListDisplay(state, action: PayloadAction<SearchOptionType[]>) {
@@ -152,7 +181,7 @@ export const postsSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(fetchPosts.pending, (state, action) => {
+      .addCase(fetchPosts.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
@@ -164,13 +193,15 @@ export const postsSlice = createSlice({
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(createPost.fulfilled, (state) => {
+        state.status = "idle";
       });
   },
 });
 
 // for use in the required components
 export const {
-  createAPost,
   editAPost,
   deleteAPost,
   searchPostListDisplay,
