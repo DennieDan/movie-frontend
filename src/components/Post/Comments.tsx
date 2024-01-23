@@ -24,6 +24,7 @@ import {
   selectUserListStatus,
 } from "../../store/users-slice.ts";
 import { UserItem } from "../../store/auth-slice.ts";
+import CommentVote from "./CommentVote.tsx";
 
 type CommentsProps = {
   item: PostItemType;
@@ -137,7 +138,13 @@ function CommentItem({ post, item }: CommentItemProps) {
           <Typography variant="body2">{commentAuthor.username}</Typography>
         </Stack>
         <Typography variant="body1">{item.content}</Typography>
-        <Stack direction="row" alignItems="center" justifyContent="flex-start">
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          justifyContent="flex-start"
+        >
+          <CommentVote commentItem={item} />
           <Button
             id="profile-button"
             startIcon={<ChatBubbleOutlineIcon />}

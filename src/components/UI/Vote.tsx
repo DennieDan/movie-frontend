@@ -34,7 +34,7 @@ export default function Vote({ item }: VoteProps) {
       >
         <ArrowDropUpRoundedIcon sx={{ fontSize: 70 }} />
       </IconButton>
-      <Typography>{item.votes}</Typography>
+      <Typography>{item.votes === 0 ? "Vote" : item.votes}</Typography>
       <IconButton
         sx={{ borderRadius: "10px", padding: "0.125px" }}
         onClick={handleDownVote}
