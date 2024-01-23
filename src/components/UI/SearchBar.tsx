@@ -5,8 +5,12 @@ import {
   TextField,
 } from "@mui/material";
 import { ReactNode, useState } from "react";
-import { useAppDispatch } from "../../store/hooks.ts";
-import { searchPostListDisplay } from "../../store/posts-slice.ts";
+import { useAppDispatch, useAppSelector } from "../../store/hooks.ts";
+import {
+  getSortBy,
+  searchPostListDisplay,
+  sortPostListDisplay,
+} from "../../store/posts-slice.ts";
 import { TOPICS } from "../../dummy-topics.ts";
 import { MOVIES } from "../../dummy-movies.ts";
 import { SearchOptionType, isTopicType } from "../../helpers/utils.ts";
@@ -21,6 +25,7 @@ function SearchBar() {
     []
   );
   const dispatch = useAppDispatch();
+  const sortBy = useAppSelector(getSortBy);
 
   const renderInputTextField: (
     params: AutocompleteRenderInputParams
@@ -41,6 +46,7 @@ function SearchBar() {
     setSelectedOptions(values);
     // console.log(values);
     dispatch(searchPostListDisplay(values));
+    dispatch(sortPostListDisplay(sortBy));
   }
 
   return (
@@ -54,7 +60,9 @@ function SearchBar() {
           options={searchOptions}
           groupBy={(option) => option.group}
           getOptionLabel={(option) =>
-            isTopicType(option) ? option.name : option.title + " " + option.year
+            isTopicType(option)
+              ? option.title
+              : option.title + " " + option.year
           }
           onChange={handleChange}
           renderInput={renderInputTextField}

@@ -19,17 +19,17 @@ import {
   getPostsStatus,
   getPostsError,
   fetchPosts,
+  getSortBy,
 } from "../store/posts-slice.ts";
 
 export default function Homepage() {
   const postList: PostItemType[] = useAppSelector(selectDisplayPosts);
-  console.log(postList);
   const postStatus = useAppSelector(getPostsStatus);
   const postError = useAppSelector(getPostsError);
 
   // const postList: PostItemType[] = useAppSelector(() => selectDisplayPosts());
   const dispatch = useAppDispatch();
-  const [sortBy, setSortBy] = useState<string>("start-date");
+  const [sortBy, setSortBy] = useState<string>(useAppSelector(getSortBy));
 
   useEffect(() => {
     if (postStatus === "idle") {

@@ -2,11 +2,12 @@ import { IconButton, Stack, Typography } from "@mui/material";
 import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
 import {
-  upVote,
   type PostItem as PostItemType,
-  downVote,
-} from "../../store/posts-slice";
-import { useAppDispatch } from "../../store/hooks";
+  upvotePost,
+  downvotePost,
+} from "../../store/posts-slice.ts";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { UserItem, getAuthUser } from "../../store/auth-slice.ts";
 
 type VoteProps = {
   item: PostItemType;
@@ -14,13 +15,15 @@ type VoteProps = {
 
 export default function Vote({ item }: VoteProps) {
   const dispatch = useAppDispatch();
+  const authUser = useAppSelector(getAuthUser) as UserItem;
 
-  function handleUpVote() {
-    dispatch(upVote(item));
+  async function handleUpVote() {
+    console.log("upvote in vote");
+    await dispatch(upvotePost({ author_id: authUser.id, post_id: item.id }));
   }
 
-  function handleDownVote() {
-    dispatch(downVote(item));
+  async function handleDownVote() {
+    await dispatch(downvotePost({ author_id: authUser.id, post_id: item.id }));
   }
 
   return (

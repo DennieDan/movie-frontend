@@ -3,37 +3,37 @@ import { type Topic } from "./store/topics-slice";
 export const TOPICS: Topic[] = [
   {
     id: 1,
-    name: "review",
+    title: "review",
     color: "#e67e91",
   },
   {
     id: 2,
-    name: "spoiler",
+    title: "spoiler",
     color: "#e090df",
   },
   {
     id: 3,
-    name: "Bad movie",
+    title: "Bad movie",
     color: "#a7e090",
   },
   {
     id: 4,
-    name: "ask",
+    title: "ask",
     color: "#c4c074",
   },
   {
     id: 5,
-    name: "Netflix",
+    title: "Netflix",
     color: "#d1476c",
   },
   {
     id: 6,
-    name: "TV Show",
+    title: "TV Show",
     color: "#7580e6",
   },
   {
     id: 7,
-    name: "Report",
+    title: "Report",
     color: "#cc9b70",
   },
 ];

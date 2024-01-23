@@ -1,5 +1,5 @@
 export type Topic = {
   id: number;
-  name: string;
+  title: string;
   color: string;
 };

@@ -18,7 +18,7 @@ export default function Root() {
         fontSize: 25,
         fontWeight: 600,
       },
-      h4: {
+      h5: {
         textAlign: "left",
         fontWeight: 600,
       },

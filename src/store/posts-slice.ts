@@ -1,15 +1,19 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { SearchOptionType, isTopicType } from "../helpers/utils.ts";
+import { SearchOptionType } from "../helpers/utils.ts";
 import { get } from "../helpers/http.ts";
 import { END_POINT } from "../constants.ts";
+import { Movie } from "./movies-slice.ts";
+import { Topic } from "./topics-slice.ts";
+import { UserItem, getAuthUser } from "./auth-slice.ts";
+import { useAppSelector } from "./hooks.ts";
 
 export type PostItem = {
   id: number;
   title: string;
   content: string;
-  movie: string;
-  topic: string;
-  author: string;
+  movie: Movie;
+  topic: Topic;
+  author: UserItem;
   votes: number;
   created_at: string;
 };
@@ -19,6 +23,7 @@ type Status = "idle" | "loading" | "succeeded" | "failed";
 type PostsState = {
   posts: PostItem[];
   postsDisplay: PostItem[];
+  sortBy: string;
   status: Status;
   error: string | null;
 };
@@ -26,6 +31,7 @@ type PostsState = {
 const initialState: PostsState = {
   posts: [],
   postsDisplay: [],
+  sortBy: "start-date",
   status: "idle",
   error: null,
 };
@@ -34,9 +40,10 @@ type RawDataPost = {
   id: number;
   title: string;
   content: string;
-  movie_id: number;
-  topic_id: number;
-  author_id: number;
+  movie: Movie;
+  topic: Topic;
+  author: UserItem;
+  votes: number;
   created_at: string;
   updated_at: string;
 };
@@ -57,10 +64,10 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
       id: rawPost.id,
       title: rawPost.title,
       content: rawPost.content,
-      movie: "young Sheldon",
-      topic: "Netflix",
-      author: "tonyton",
-      votes: 250,
+      movie: rawPost.movie,
+      topic: rawPost.topic,
+      author: rawPost.author,
+      votes: rawPost.votes,
       created_at: rawPost.created_at,
     };
   });
@@ -90,10 +97,53 @@ export const createPost = createAsyncThunk(
   }
 );
 
+export const upvotePost = createAsyncThunk(
+  "posts/upvotePost",
+  async (body: { author_id: number; post_id: number }) => {
+    const response = await fetch(
+      `${END_POINT}/api/upvote_post/${body.author_id}/${body.post_id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("upvote in slice 2");
+
+    const data = (await response.json()) as { message: string };
+    console.log(data);
+    return data;
+  }
+);
+export const downvotePost = createAsyncThunk(
+  "posts/downvotePost",
+  async (body: { author_id: number; post_id: number }) => {
+    const response = await fetch(
+      `${END_POINT}/api/downvote_post/${body.author_id}/${body.post_id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = (await response.json()) as { message: string };
+    return data;
+  }
+);
+
 // selector functions
-export const selectDisplayPosts = (state) => state.posts.postsDisplay;
+export const selectDisplayPosts = (state) => {
+  console.log("selecting");
+  console.log(state.posts.postsDisplay);
+  return state.posts.postsDisplay;
+};
+export const getAllPosts = (state) => state.posts.posts;
 export const getPostsError = (state) => state.posts.error;
 export const getPostsStatus = (state) => state.posts.status;
+export const getSortBy = (state) => state.posts.sortBy;
 
 // function isSearchedPost(post: PostItem, searchOptions: string[]): boolean {
 //   return (
@@ -139,7 +189,7 @@ export const postsSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
-    editAPost(state, action) {},
+    editAPost() {},
     deleteAPost(state, action) {},
     searchPostListDisplay(state, action: PayloadAction<SearchOptionType[]>) {
       // console.log(action.payload);
@@ -147,37 +197,35 @@ export const postsSlice = createSlice({
         // console.log(0);
         state.postsDisplay = state.posts;
       } else {
-        const input = action.payload.map((option) =>
-          isTopicType(option) ? option.name : option.title
-        );
+        const input = action.payload.map((option) => option.title);
         state.postsDisplay = state.posts.filter(
-          (post) => input.includes(post.topic) || input.includes(post.movie)
+          (post) =>
+            input.includes(post.topic.title) || input.includes(post.movie.title)
         );
         console.log(input);
       }
     },
     sortPostListDisplay(state, action: PayloadAction<string>) {
-      const sortBy = action.payload;
-      if (sortBy === "start-date") {
-        state.postsDisplay = state.posts
+      console.log("sorting");
+      state.sortBy = action.payload;
+      if (state.sortBy === "start-date") {
+        state.postsDisplay = state.postsDisplay
           .slice()
           .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
-      } else if (sortBy === "movie") {
-        state.postsDisplay = state.posts
+      } else if (state.sortBy === "movie") {
+        state.postsDisplay = state.postsDisplay
           .slice()
-          .sort((a, b) => a.movie.localeCompare(b.movie));
-      } else if (sortBy === "topic") {
-        state.postsDisplay = state.posts
+          .sort((a, b) => a.movie.title.localeCompare(b.movie.title));
+      } else if (state.sortBy === "topic") {
+        state.postsDisplay = state.postsDisplay
           .slice()
-          .sort((a, b) => a.topic.localeCompare(b.topic));
+          .sort((a, b) => a.topic.title.localeCompare(b.topic.title));
       } else {
-        state.postsDisplay = state.posts
+        state.postsDisplay = state.postsDisplay
           .slice()
           .sort((a, b) => b.votes - a.votes);
       }
     },
-    upVote(state, action: PayloadAction<PostItem>) {},
-    downVote(state, action: PayloadAction<PostItem>) {},
   },
   extraReducers(builder) {
     builder
@@ -187,6 +235,7 @@ export const postsSlice = createSlice({
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "succeeded";
         // Add any fetched posts to the array
+        console.log("succeeded");
         state.posts = action.payload;
         state.postsDisplay = action.payload;
       })
@@ -195,6 +244,12 @@ export const postsSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(createPost.fulfilled, (state) => {
+        state.status = "idle";
+      })
+      .addCase(upvotePost.fulfilled, (state) => {
+        state.status = "idle";
+      })
+      .addCase(downvotePost.fulfilled, (state) => {
         state.status = "idle";
       });
   },
@@ -206,6 +261,4 @@ export const {
   deleteAPost,
   searchPostListDisplay,
   sortPostListDisplay,
-  upVote,
-  downVote,
 } = postsSlice.actions;

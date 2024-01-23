@@ -46,9 +46,9 @@ export default function Post({ item }: PostProps) {
             justifyContent="flex-start"
             flexGrow={10}
           >
-            {item.movie && <MovieTab movie={item.movie} />}
+            {item.movie && <MovieTab movie={item.movie.title} />}
             <Typography variant="subtitle2">
-              Posted by {item.author} {formatCreateInterval(item)}
+              Posted by {item.author.username} {formatCreateInterval(item)}
             </Typography>
           </Box>
           {/* <Box>
@@ -63,14 +63,28 @@ export default function Post({ item }: PostProps) {
             <TopicChip name={item.topic} color="success" />
           </Box> */}
           <Box display="block" alignItems="left" justifyContent="center">
-            <Typography variant="h4">{item.title}</Typography>
+            <Typography variant="h5">{item.title}</Typography>
             <Box
               display="flex"
               flexDirection="row"
               alignItems="center"
               justifyContent="flex-start"
             >
-              {item.topic && <TopicChip name={item.topic} color="success" />}
+              {item.topic && (
+                <TopicChip
+                  name={item.topic.title}
+                  color={
+                    item.topic.color as
+                      | "default"
+                      | "primary"
+                      | "secondary"
+                      | "error"
+                      | "info"
+                      | "success"
+                      | "warning"
+                  }
+                />
+              )}
             </Box>
             <Typography variant="body1">{item.content}</Typography>
           </Box>
