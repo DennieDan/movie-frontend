@@ -33,6 +33,12 @@ export default function Root() {
         textAlign: "left",
         fontSize: 18,
       },
+      body2: {
+        textAlign: "left",
+        fontSize: 15,
+        fontWeight: 600,
+        fontFamily: "Helvetica",
+      },
     },
     palette: {
       common: { black: "#000", white: "#fff" },

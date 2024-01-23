@@ -26,7 +26,6 @@ export default function PostDetailPage() {
   useEffect(() => {
     if (postStatus === "idle") {
       dispatch(fetchPosts());
-      console.log("done");
     }
   }, [postStatus, dispatch]);
 
@@ -34,7 +33,7 @@ export default function PostDetailPage() {
   // const item: PostItemType = useAppSelector((state) =>
   //   state.posts.posts.find((post) => post.id === postId)
   // );
-  console.log(item);
+
   return (
     <Stack direction="column" spacing={5} width="100%">
       {item && (

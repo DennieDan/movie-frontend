@@ -10,8 +10,6 @@ export type UserItem = {
   posts: PostItem[] | null;
   comments: CommentItem[] | null;
   savedPosts: PostItem[] | null;
-  created_at: string;
-  updated_at: string;
 };
 
 type Status = "idle" | "loading" | "succeeded" | "failed";

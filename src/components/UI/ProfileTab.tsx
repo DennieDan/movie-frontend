@@ -79,20 +79,6 @@ export default function ProfileTab({ username }: ProfileTabProps) {
     dispatch(logoutUser());
   };
   return (
-    // <Button variant="outlined" size="large">
-    //   <Box
-    //     width="100%"
-    //     display="flex"
-    //     flexDirection="row"
-    //     alignItems="center"
-    //     justifyContent="space-between"
-    //   >
-    //     <Avatar sizes="small" />
-    //     <Typography variant="h6" fontFamily="Arial">
-    //       Dan Dinh
-    //     </Typography>
-    //   </Box>
-    // </Button>
     <div>
       <Button
         id="profile-button"

@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   CircularProgress,
@@ -17,14 +18,22 @@ import {
 import { useAppDispatch, useAppSelector } from "../../store/hooks.ts";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { type PostItem as PostItemType } from "../../store/posts-slice.ts";
+import {
+  fetchUsers,
+  selectAllUsers,
+  selectUserListStatus,
+} from "../../store/users-slice.ts";
+import { UserItem } from "../../store/auth-slice.ts";
 
 type CommentsProps = {
   item: PostItemType;
 };
 
 export default function Comments({ item }: CommentsProps) {
+  // const comments: CommentItemType[] = item.comments;
   const comments: CommentItemType[] = useAppSelector(selectCommentByPostId);
   const commentStatus = useAppSelector(selectCommentStatus);
+  const userListStatus = useAppSelector(selectUserListStatus);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -57,24 +66,26 @@ export default function Comments({ item }: CommentsProps) {
         spacing={0.5}
       >
         <Typography variant="body1">Comment as</Typography>
-        <Typography variant="subtitle1"> Dan Dinh</Typography>
+        <Typography variant="subtitle1">Dan Dinh</Typography>
       </Stack>
       <CommentInput post={item} />
       <hr style={{ width: "100%", marginTop: "50px" }}></hr>
       <Stack direction="column" spacing={5}>
-        {commentStatus === "loading" ? (
-          <CircularProgress />
-        ) : (
-          comments.map((comment) => (
-            <CommentItem key={comment.id} post={item} item={comment} />
-          ))
+        {
+          commentStatus === "loading" || userListStatus === "loading" ? (
+            <CircularProgress />
+          ) : (
+            comments.map((comment) => (
+              <CommentItem key={comment.id} post={item} item={comment} />
+            ))
+          )
           // comments.map(
           //   (comment) =>
           //     comment.response_id === undefined && (
           //       <CommentItem key={comment.id} post={item} item={comment} />
           //     )
           // )
-        )}
+        }
       </Stack>
     </Box>
   );
@@ -87,7 +98,24 @@ type CommentItemProps = {
 
 function CommentItem({ post, item }: CommentItemProps) {
   const [isReplying, setIsReplying] = useState<boolean>(false);
+  const userListStatus = useAppSelector(selectUserListStatus) as string;
+  const userList: UserItem[] = useAppSelector(selectAllUsers);
+  const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    if (userListStatus === "idle") {
+      dispatch(fetchUsers());
+      console.log("done");
+    }
+  }, [dispatch, userListStatus]);
+
+  const commentAuthor: UserItem = userList.find(
+    (user) => user.id === item.user_id
+  );
+
+  console.log("CommentItem");
+  console.log("comment " + userListStatus);
+  // const username = commentAuthor.username;
   // const replies = comments.filter((c) => c.response_id === item.id);
 
   function handleClick() {
@@ -95,32 +123,45 @@ function CommentItem({ post, item }: CommentItemProps) {
   }
 
   return (
-    <Box sx={{ padding: "0 0 0 10px", borderLeft: 3, borderColor: "grey.400" }}>
-      <Typography variant="body1">{item.content}</Typography>
-      <Stack direction="row" alignItems="center" justifyContent="flex-start">
-        <Button
-          id="profile-button"
-          startIcon={<ChatBubbleOutlineIcon />}
-          sx={{ color: "grey" }}
-          disableElevation
-          disableRipple
-          onClick={handleClick}
+    commentAuthor && (
+      <Box
+        sx={{ padding: "0 0 0 10px", borderLeft: 3, borderColor: "grey.400" }}
+      >
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          justifyContent="flex-start"
         >
-          Reply
-        </Button>
-      </Stack>
-      {isReplying && (
-        <CommentInput
-          post={post}
-          item={item}
-          onReply={() => setIsReplying(false)}
-        />
-      )}
-      {item.responses &&
-        item.responses.map((reply) => (
-          <CommentItem key={reply.id} post={post} item={reply} />
-        ))}
-    </Box>
+          <Avatar sizes="small" />
+          <Typography variant="body2">{commentAuthor.username}</Typography>
+        </Stack>
+        <Typography variant="body1">{item.content}</Typography>
+        <Stack direction="row" alignItems="center" justifyContent="flex-start">
+          <Button
+            id="profile-button"
+            startIcon={<ChatBubbleOutlineIcon />}
+            sx={{ color: "grey" }}
+            disableElevation
+            disableRipple
+            onClick={handleClick}
+          >
+            Reply
+          </Button>
+        </Stack>
+        {isReplying && (
+          <CommentInput
+            post={post}
+            item={item}
+            onReply={() => setIsReplying(false)}
+          />
+        )}
+        {item.responses &&
+          item.responses.map((reply) => (
+            <CommentItem key={reply.id} post={post} item={reply} />
+          ))}
+      </Box>
+    )
   );
 }
 
