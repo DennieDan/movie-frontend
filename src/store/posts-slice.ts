@@ -4,8 +4,8 @@ import { get } from "../helpers/http.ts";
 import { END_POINT } from "../constants.ts";
 import { Movie } from "./movies-slice.ts";
 import { Topic } from "./topics-slice.ts";
-import { UserItem, getAuthUser } from "./auth-slice.ts";
-import { useAppSelector } from "./hooks.ts";
+import { UserItem } from "./auth-slice.ts";
+import { CommentItem } from "./comments-slice.ts";
 
 export type PostItem = {
   id: number;
@@ -14,6 +14,7 @@ export type PostItem = {
   movie: Movie;
   topic: Topic;
   author: UserItem;
+  comments: CommentItem[];
   votes: number;
   created_at: string;
 };
@@ -43,6 +44,7 @@ type RawDataPost = {
   movie: Movie;
   topic: Topic;
   author: UserItem;
+  comments: CommentItem[];
   votes: number;
   created_at: string;
   updated_at: string;
@@ -67,6 +69,7 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
       movie: rawPost.movie,
       topic: rawPost.topic,
       author: rawPost.author,
+      comments: rawPost.comments,
       votes: rawPost.votes,
       created_at: rawPost.created_at,
     };

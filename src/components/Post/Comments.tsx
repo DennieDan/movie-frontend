@@ -18,9 +18,11 @@ export default function Comments({ item }: CommentsProps) {
   // );
 
   // use later when we have id route
-  const comments: CommentItemType[] = useAppSelector(
-    (state) => state.comments.items
-  ).filter((c) => c.post_id === item.id);
+  // const comments: CommentItemType[] = useAppSelector(
+  //   (state) => state.comments.items
+  // ).filter((c) => c.post_id === item.id);
+
+  // const comments: CommentItemType[] = item.comments;
 
   return (
     <Box
@@ -48,7 +50,7 @@ export default function Comments({ item }: CommentsProps) {
       <Stack direction="column" spacing={5}>
         {comments.map(
           (comment) =>
-            comment.reply_to === undefined && (
+            comment.response_id === undefined && (
               <CommentItem key={comment.id} post={item} item={comment} />
             )
         )}
@@ -68,7 +70,7 @@ function CommentItem({ post, item }: CommentItemProps) {
     (state) => state.comments.items
   );
 
-  const replies = comments.filter((c) => c.reply_to === item.id);
+  const replies = comments.filter((c) => c.response_id === item.id);
 
   function handleClick() {
     setIsReplying((prev) => !prev);
@@ -76,7 +78,7 @@ function CommentItem({ post, item }: CommentItemProps) {
 
   return (
     <Box sx={{ padding: "0 0 0 10px", borderLeft: 3, borderColor: "grey.400" }}>
-      <Typography variant="body1">{item.body}</Typography>
+      <Typography variant="body1">{item.content}</Typography>
       <Stack direction="row" alignItems="center" justifyContent="flex-start">
         <Button
           id="profile-button"
@@ -129,8 +131,8 @@ function CommentInput(props: CommentInputProps) {
   function handleComment() {
     const newComment = {
       post_id: post.id,
-      reply_to: item?.id,
-      body: commentBody,
+      response_id: item?.id,
+      content: commentBody,
       comments: [],
     };
     dispatch(addAComment(newComment));

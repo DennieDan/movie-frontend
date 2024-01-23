@@ -59,7 +59,7 @@ export default function PostItem({ item }: PostItemProps) {
           justifyContent="space-evenly"
           alignItems="center"
         >
-          <Box>{10} comments</Box>
+          <Box>{item.comments.length} comments</Box>
           <Box display="flex" flexDirection="row">
             <Avatar />
             <Box display="flex" flexDirection="column">

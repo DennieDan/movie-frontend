@@ -6,10 +6,10 @@ let currentId: number = 9;
 export type CommentItem =
   | {
       id: number | undefined;
-      // user_id: number,
+      user_id: number;
       post_id: number;
-      reply_to: number | undefined;
-      body: string;
+      response_id: number | undefined;
+      content: string;
       // created_at: string,
       comments: CommentItem[]; // delete later
     }
@@ -30,14 +30,15 @@ export const commentsSlice = createSlice({
     addAComment(
       state,
       action: PayloadAction<{
-        body: string;
+        content: string;
         post_id: number;
-        reply_to: number;
+        response_id: number;
         comments: CommentItem[];
       }>
     ) {
       const newComment = {
         id: ++currentId,
+        user_id: 5,
         ...action.payload,
       };
       // const newComment = {

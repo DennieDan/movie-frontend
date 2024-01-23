@@ -10,6 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../store/hooks.ts";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import Comments from "../components/Post/Comments.tsx";
 
 export default function PostDetailPage() {
   const postList: PostItemType[] = useAppSelector(getAllPosts);
@@ -36,8 +37,12 @@ export default function PostDetailPage() {
   console.log(item);
   return (
     <Stack direction="column" spacing={5} width="100%">
-      {item && <Post item={item} />}
-      {/* <Comments item={item} /> */}
+      {item && (
+        <>
+          <Post item={item} />
+          <Comments item={item} />
+        </>
+      )}
     </Stack>
   );
 }
