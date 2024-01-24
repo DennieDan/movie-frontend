@@ -14,6 +14,7 @@ import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { useState } from "react";
 import { useAppDispatch } from "../../store/hooks";
 import { logoutUser } from "../../store/auth-slice";
+import { useNavigate } from "react-router-dom";
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -64,6 +65,7 @@ type ProfileTabProps = {
 
 export default function ProfileTab({ username }: ProfileTabProps) {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -77,6 +79,7 @@ export default function ProfileTab({ username }: ProfileTabProps) {
   const handleLogout = () => {
     console.log("handle logout");
     dispatch(logoutUser());
+    navigate("/");
   };
   return (
     <div>

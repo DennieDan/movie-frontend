@@ -8,6 +8,7 @@ import {
 } from "../../store/posts-slice.ts";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { UserItem, getAuthUser } from "../../store/auth-slice.ts";
+import { useNavigate } from "react-router-dom";
 
 type VoteProps = {
   item: PostItemType;
@@ -16,14 +17,24 @@ type VoteProps = {
 export default function Vote({ item }: VoteProps) {
   const dispatch = useAppDispatch();
   const authUser = useAppSelector(getAuthUser) as UserItem;
+  const navigate = useNavigate();
 
   async function handleUpVote() {
-    console.log("upvote in vote");
-    await dispatch(upvotePost({ author_id: authUser.id, post_id: item.id }));
+    if (authUser) {
+      await dispatch(upvotePost({ author_id: authUser.id, post_id: item.id }));
+    } else {
+      navigate("/login");
+    }
   }
 
   async function handleDownVote() {
-    await dispatch(downvotePost({ author_id: authUser.id, post_id: item.id }));
+    if (authUser) {
+      await dispatch(
+        downvotePost({ author_id: authUser.id, post_id: item.id })
+      );
+    } else {
+      navigate("/login");
+    }
   }
 
   return (
@@ -34,7 +45,7 @@ export default function Vote({ item }: VoteProps) {
       >
         <ArrowDropUpRoundedIcon sx={{ fontSize: 70 }} />
       </IconButton>
-      <Typography>{item.votes === 0 ? "Vote" : item.votes}</Typography>
+      <Typography>{item.votes}</Typography>
       <IconButton
         sx={{ borderRadius: "10px", padding: "0.125px" }}
         onClick={handleDownVote}

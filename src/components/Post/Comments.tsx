@@ -9,22 +9,31 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
-  addAComment,
   selectCommentByPostId,
   type CommentItem as CommentItemType,
   selectCommentStatus,
   getCommentByPostId,
+  createComment,
+  editComment,
 } from "../../store/comments-slice.ts";
 import { useAppDispatch, useAppSelector } from "../../store/hooks.ts";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { type PostItem as PostItemType } from "../../store/posts-slice.ts";
 import {
   fetchUsers,
   selectAllUsers,
   selectUserListStatus,
 } from "../../store/users-slice.ts";
-import { UserItem } from "../../store/auth-slice.ts";
+import {
+  UserItem,
+  getAuthUser,
+  getUserStatus,
+  validateUser,
+} from "../../store/auth-slice.ts";
 import CommentVote from "./CommentVote.tsx";
+import { useNavigate } from "react-router-dom";
 
 type CommentsProps = {
   item: PostItemType;
@@ -35,18 +44,18 @@ export default function Comments({ item }: CommentsProps) {
   const comments: CommentItemType[] = useAppSelector(selectCommentByPostId);
   const commentStatus = useAppSelector(selectCommentStatus);
   const userListStatus = useAppSelector(selectUserListStatus);
+  const authUser = useAppSelector(getAuthUser) as UserItem;
+  const authStatus = useAppSelector(getUserStatus);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (commentStatus === "idle") {
       dispatch(getCommentByPostId(item.id));
     }
-  }, [commentStatus, dispatch, item.id]);
-
-  // use later when we have id route
-  // const comments: CommentItemType[] = useAppSelector(
-  //   (state) => state.comments.items
-  // ).filter((c) => c.post_id === item.id);
+    if (authStatus === "idle") {
+      dispatch(validateUser);
+    }
+  }, [commentStatus, dispatch, item.id, authStatus]);
 
   return (
     <Box
@@ -60,33 +69,43 @@ export default function Comments({ item }: CommentsProps) {
         padding: "10px 10px 10px 80px",
       }}
     >
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="flex-start"
-        spacing={0.5}
-      >
-        <Typography variant="body1">Comment as</Typography>
-        <Typography variant="subtitle1">Dan Dinh</Typography>
-      </Stack>
-      <CommentInput post={item} />
+      {authUser ? (
+        <>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            spacing={0.5}
+          >
+            <Typography variant="body1">Comment as</Typography>
+            <Typography variant="subtitle1">{authUser.username}</Typography>
+          </Stack>
+          <CommentInput post={item} />
+        </>
+      ) : (
+        <Box display="flex" justifyContent="flex-start">
+          <Button variant="outlined" href="/login">
+            Add a comment
+          </Button>
+        </Box>
+      )}
+
       <hr style={{ width: "100%", marginTop: "50px" }}></hr>
       <Stack direction="column" spacing={5}>
-        {
-          commentStatus === "loading" || userListStatus === "loading" ? (
-            <CircularProgress />
-          ) : (
-            comments.map((comment) => (
-              <CommentItem key={comment.id} post={item} item={comment} />
-            ))
-          )
-          // comments.map(
-          //   (comment) =>
-          //     comment.response_id === undefined && (
-          //       <CommentItem key={comment.id} post={item} item={comment} />
-          //     )
+        {commentStatus === "loading" || userListStatus === "loading" ? (
+          <CircularProgress />
+        ) : (
+          //   comments.map((comment) => (
+          //     <CommentItem key={comment.id} post={item} item={comment} />
+          //   ))
           // )
-        }
+          comments.map(
+            (comment) =>
+              comment.response_id === null && (
+                <CommentItem key={comment.id} post={item} item={comment} />
+              )
+          )
+        )}
       </Stack>
     </Box>
   );
@@ -99,16 +118,30 @@ type CommentItemProps = {
 
 function CommentItem({ post, item }: CommentItemProps) {
   const [isReplying, setIsReplying] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const userListStatus = useAppSelector(selectUserListStatus) as string;
   const userList: UserItem[] = useAppSelector(selectAllUsers);
+  const comments: CommentItemType[] = useAppSelector(selectCommentByPostId);
+  const commentStatus = useAppSelector(selectCommentStatus);
+  const authUser = useAppSelector(getAuthUser) as UserItem;
+  const authStatus = useAppSelector(getUserStatus);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userListStatus === "idle") {
       dispatch(fetchUsers());
       console.log("done");
     }
-  }, [dispatch, userListStatus]);
+    if (commentStatus === "idle") {
+      dispatch(getCommentByPostId(post.id));
+      console.log("done");
+    }
+    if (authStatus === "idle") {
+      dispatch(validateUser());
+      console.log("done");
+    }
+  }, [dispatch, userListStatus, commentStatus, post.id, authStatus]);
 
   const commentAuthor: UserItem = userList.find(
     (user) => user.id === item.user_id
@@ -117,10 +150,26 @@ function CommentItem({ post, item }: CommentItemProps) {
   console.log("CommentItem");
   console.log("comment " + userListStatus);
   // const username = commentAuthor.username;
-  // const replies = comments.filter((c) => c.response_id === item.id);
+  const replies = comments.filter((c) => c.response_id === item.id);
+
+  const votes = item.comment_votes.reduce((acc, b) => acc + b.Score, 0);
+  console.log(item.comment_votes[0]);
 
   function handleClick() {
-    setIsReplying((prev) => !prev);
+    if (authUser) {
+      setIsReplying((prev) => !prev);
+    } else {
+      navigate("/login");
+    }
+  }
+
+  function handleClickEdit() {
+    setIsEditing(true);
+    setIsReplying(false);
+  }
+
+  function handleCloseEdit() {
+    setIsEditing(false);
   }
 
   return (
@@ -138,24 +187,41 @@ function CommentItem({ post, item }: CommentItemProps) {
           <Typography variant="body2">{commentAuthor.username}</Typography>
         </Stack>
         <Typography variant="body1">{item.content}</Typography>
-        <Stack
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          justifyContent="flex-start"
-        >
-          <CommentVote commentItem={item} />
-          <Button
-            id="profile-button"
-            startIcon={<ChatBubbleOutlineIcon />}
-            sx={{ color: "grey" }}
-            disableElevation
-            disableRipple
-            onClick={handleClick}
+        {isEditing ? (
+          <CommentInput comment={item} onClose={handleCloseEdit} />
+        ) : (
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            justifyContent="flex-start"
           >
-            Reply
-          </Button>
-        </Stack>
+            <CommentVote commentItem={item} votes={votes} />
+            <Button
+              id="reply-button"
+              startIcon={<ChatBubbleOutlineIcon />}
+              sx={{ color: "grey" }}
+              disableElevation
+              disableRipple
+              onClick={handleClick}
+            >
+              Reply
+            </Button>
+            {authUser.id === item.user_id && (
+              <Button
+                id="edit-button"
+                startIcon={<ModeEditOutlineOutlinedIcon />}
+                sx={{ color: "grey" }}
+                disableElevation
+                disableRipple
+                onClick={handleClickEdit}
+              >
+                Edit
+              </Button>
+            )}
+          </Stack>
+        )}
+
         {isReplying && (
           <CommentInput
             post={post}
@@ -163,8 +229,8 @@ function CommentItem({ post, item }: CommentItemProps) {
             onReply={() => setIsReplying(false)}
           />
         )}
-        {item.responses &&
-          item.responses.map((reply) => (
+        {replies &&
+          replies.map((reply) => (
             <CommentItem key={reply.id} post={post} item={reply} />
           ))}
       </Box>
@@ -183,30 +249,72 @@ type ReplyInputProps = {
   onReply: () => void;
 };
 
-type CommentInputProps = PostCommentInputProps | ReplyInputProps;
+type EditInputProps = {
+  item?: never;
+  post?: never;
+  comment: CommentItemType;
+  onClose: () => void;
+};
+
+type CommentInputProps =
+  | PostCommentInputProps
+  | ReplyInputProps
+  | EditInputProps;
 
 function isReplyInputProps(props): props is ReplyInputProps {
   return "item" in props;
 }
 
+function isEditInputProps(props): props is EditInputProps {
+  return "comment" in props;
+}
+
 // eslint-disable-next-line no-shadow-restricted-names
 function CommentInput(props: CommentInputProps) {
-  const [commentBody, setCommentBody] = useState<string>("");
+  const [commentBody, setCommentBody] = useState<string>(
+    isEditInputProps(props) ? props.comment.content : ""
+  );
+  const authUser = useAppSelector(getAuthUser);
   const dispatch = useAppDispatch();
 
   const { post, item } = props;
   function handleComment() {
-    const newComment = {
+    const newComment: {
+      user_id: number;
+      post_id: number;
+      response_id: number | null;
+      body: string;
+    } = {
+      user_id: authUser.id,
       post_id: post.id,
       response_id: item?.id,
-      content: commentBody,
-      responses: [],
+      body: commentBody,
     };
-    dispatch(addAComment(newComment));
+    dispatch(createComment(newComment));
     setCommentBody("");
     if (isReplyInputProps(props)) {
       const { onReply } = props;
       onReply();
+    }
+  }
+
+  function handleCancel() {
+    if (isEditInputProps(props)) {
+      const { onClose } = props;
+      onClose();
+    }
+  }
+
+  function handleEditComment() {
+    if (isEditInputProps(props)) {
+      const { comment } = props;
+      dispatch(editComment({ comment_id: comment.id, body: commentBody }));
+    }
+  }
+
+  function handleDeleteComment() {
+    if (isEditInputProps(props)) {
+      const { comment } = props;
     }
   }
 
@@ -220,23 +328,85 @@ function CommentInput(props: CommentInputProps) {
         value={commentBody}
         onChange={(event) => setCommentBody(event.target.value)}
       />
-      <Box display="flex" flexDirection="row" justifyContent="flex-end">
-        <Button
-          component="label"
-          variant="contained"
-          disableRipple
-          sx={{
-            mt: "10px",
-            width: "150px",
-            fontSize: 18,
-            fontWeight: 700,
-            borderRadius: "5px",
-          }}
-          onClick={handleComment}
-        >
-          Comment
-        </Button>
-      </Box>
+      <Stack
+        direction="row"
+        justifyContent="flex-end"
+        spacing={3}
+        sx={{ marginTop: 2 }}
+      >
+        {!isEditInputProps(props) ? (
+          <Button
+            component="label"
+            variant="contained"
+            disabled={commentBody === ""}
+            disableRipple
+            sx={{
+              mt: "10px",
+              width: "150px",
+              fontSize: 18,
+              fontWeight: 700,
+              borderRadius: "5px",
+            }}
+            onClick={handleComment}
+          >
+            Comment
+          </Button>
+        ) : (
+          <>
+            <Button
+              component="label"
+              variant="contained"
+              disabled={commentBody === ""}
+              disableRipple
+              sx={{
+                mt: "10px",
+                fontSize: 18,
+                fontWeight: 700,
+                borderRadius: "5px",
+                color: "white",
+                backgroundColor: "red",
+              }}
+              onClick={handleDeleteComment}
+            >
+              <DeleteOutlineOutlinedIcon />
+            </Button>
+            <Button
+              component="label"
+              variant="contained"
+              disabled={commentBody === ""}
+              disableRipple
+              sx={{
+                mt: "10px",
+                width: "150px",
+                fontSize: 18,
+                fontWeight: 700,
+                borderRadius: "5px",
+                color: "white",
+                backgroundColor: "grey",
+              }}
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
+            <Button
+              component="label"
+              variant="contained"
+              disabled={commentBody === ""}
+              disableRipple
+              sx={{
+                mt: "10px",
+                width: "150px",
+                fontSize: 18,
+                fontWeight: 700,
+                borderRadius: "5px",
+              }}
+              onClick={handleEditComment}
+            >
+              Done
+            </Button>
+          </>
+        )}
+      </Stack>
     </>
   );
 }

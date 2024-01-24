@@ -1,8 +1,6 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { END_POINT } from "../constants.ts";
 import { get } from "../helpers/http.ts";
-
-let currentId: number = 9;
 
 export type CommentItem = {
   id: number | undefined;
@@ -11,6 +9,7 @@ export type CommentItem = {
   response_id: number | undefined;
   content: string;
   responses: CommentItem[]; // delete later
+  comment_votes: CommentVoteItem[];
 };
 
 type CommentsState = {
@@ -26,12 +25,24 @@ type RawCommentReturn = {
   ResponseID: number | undefined;
   content: string;
   Responses: CommentItem[]; // delete later
+  comment_votes: CommentVoteItem[];
+};
+
+type CommentVoteItem = {
+  UserID: number;
+  CommentID: number;
+  Score: number;
 };
 
 const initialState: CommentsState = {
   items: [],
   status: "idle",
   error: null,
+};
+
+type CreateCommentReturnType = {
+  message?: string;
+  comment?: CommentItem;
 };
 
 export const getCommentByPostId = createAsyncThunk(
@@ -49,10 +60,108 @@ export const getCommentByPostId = createAsyncThunk(
         response_id: rawComment.ResponseID,
         content: rawComment.content,
         responses: rawComment.Responses,
+        comment_votes: rawComment.comment_votes,
       };
     });
 
+    console.log("fetching comment");
+    console.log(comments);
     return comments;
+  }
+);
+
+export const createComment = createAsyncThunk(
+  "comments/createComment",
+  async (body: {
+    user_id: number;
+    post_id: number;
+    response_id: number | null;
+    body: string;
+  }) => {
+    const response = await fetch(`${END_POINT}/api/create_comment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = (await response.json()) as CreateCommentReturnType;
+    return data;
+  }
+);
+
+export const editComment = createAsyncThunk(
+  "comments/editComment",
+  async (body: { comment_id: number; body: string }) => {
+    const response = await fetch(
+      `${END_POINT}/api/edit_comment/${body.comment_id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ body: body.body }),
+      }
+    );
+
+    const data = await response.json();
+
+    return data;
+  }
+);
+
+export const deleteComment = createAsyncThunk(
+  "comments/deleteComment",
+  async (comment_id: number) => {
+    const response = await fetch(
+      `${END_POINT}/api/delete_comment/${comment_id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const data = await response.json();
+
+    return data;
+  }
+);
+
+export const upvoteComment = createAsyncThunk(
+  "comments/upvoteComment",
+  async (body: { user_id: number; comment_id: number }) => {
+    const response = await fetch(
+      `${END_POINT}/api/upvote_comment/${body.user_id}/${body.comment_id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = (await response.json()) as { message: string };
+    console.log(data);
+    return data;
+  }
+);
+
+export const downvoteComment = createAsyncThunk(
+  "comments/downvoteComment",
+  async (body: { user_id: number; comment_id: number }) => {
+    const response = await fetch(
+      `${END_POINT}/api/downvote_comment/${body.user_id}/${body.comment_id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = (await response.json()) as { message: string };
+    console.log(data);
+    return data;
   }
 );
 
@@ -62,32 +171,7 @@ export const selectCommentByPostId = (state) => state.comments.items;
 export const commentsSlice = createSlice({
   name: "comments",
   initialState,
-  reducers: {
-    addAComment(
-      state,
-      action: PayloadAction<{
-        content: string;
-        post_id: number;
-        response_id: number;
-        responses: CommentItem[];
-      }>
-    ) {
-      const newComment = {
-        id: ++currentId,
-        user_id: 5,
-        ...action.payload,
-      };
-      // const newComment = {
-      //   id: 100,
-      //   body: "Hi",
-      //   reply_to: 2,
-      //   comments: [],
-      // };
-      console.log(newComment);
-      state.items = [newComment, ...state.items];
-      console.log(state.items);
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder
       .addCase(getCommentByPostId.pending, (state) => {
@@ -100,8 +184,20 @@ export const commentsSlice = createSlice({
       .addCase(getCommentByPostId.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(createComment.fulfilled, (state) => {
+        state.status = "idle";
+      })
+      .addCase(upvoteComment.fulfilled, (state) => {
+        state.status = "idle";
+      })
+      .addCase(downvoteComment.fulfilled, (state) => {
+        state.status = "idle";
+      })
+      .addCase(editComment.fulfilled, (state) => {
+        state.status = "idle";
       });
   },
 });
 
-export const { addAComment } = commentsSlice.actions;
+// export const {} = commentsSlice.actions;

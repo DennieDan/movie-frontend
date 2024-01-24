@@ -147,6 +147,7 @@ export const authSlice = createSlice({
           state.error = "";
           localStorage.setItem("user", JSON.stringify(action.payload.user));
         }
+        console.log(state.user);
       })
       .addCase(validateUser.rejected, (state, action) => {
         state.status = "failed";

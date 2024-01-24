@@ -70,10 +70,10 @@ const Header: FunctionComponent = () => {
       ) : (
         <>
           <Stack direction="row" spacing={2}>
-            <Button variant="outlined" size="large">
+            <Button variant="outlined" size="large" href="/login">
               Sign In
             </Button>
-            <Button variant="outlined" size="large">
+            <Button variant="outlined" size="large" href="/register">
               Sign Up
             </Button>
           </Stack>

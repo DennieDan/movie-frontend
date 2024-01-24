@@ -32,7 +32,7 @@ export default function LoginPage() {
   async function onSubmit(data: LoginFormValues) {
     await dispatch(loginUser(data));
     if (loginStatus === "idle") {
-      navigate("/");
+      navigate(-1);
     }
   }
 
