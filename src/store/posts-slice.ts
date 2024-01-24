@@ -192,8 +192,6 @@ export const postsSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
-    editAPost() {},
-    deleteAPost(state, action) {},
     searchPostListDisplay(state, action: PayloadAction<SearchOptionType[]>) {
       // console.log(action.payload);
       if (action?.payload.length === 0) {
@@ -259,9 +257,5 @@ export const postsSlice = createSlice({
 });
 
 // for use in the required components
-export const {
-  editAPost,
-  deleteAPost,
-  searchPostListDisplay,
-  sortPostListDisplay,
-} = postsSlice.actions;
+export const { searchPostListDisplay, sortPostListDisplay } =
+  postsSlice.actions;

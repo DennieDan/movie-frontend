@@ -146,7 +146,7 @@ export default function CreatePostModal({
                       getOptionLabel={(option) =>
                         option.title + " " + option.year
                       }
-                      onChange={(event: unknown, newValue) => {
+                      onChange={(_event: unknown, newValue) => {
                         onChange(newValue ? newValue.id : null);
                       }}
                       renderInput={(params) => (
@@ -180,8 +180,8 @@ export default function CreatePostModal({
                           : null
                       }
                       options={topicOptions}
-                      getOptionLabel={(option) => option.name}
-                      onChange={(event: unknown, newValue) => {
+                      getOptionLabel={(option) => option.title}
+                      onChange={(_event: unknown, newValue) => {
                         onChange(newValue ? newValue.id : null);
                       }}
                       renderInput={(params) => (

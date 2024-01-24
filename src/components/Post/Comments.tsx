@@ -280,7 +280,6 @@ function CommentInput(props: CommentInputProps) {
   const authUser = useAppSelector(getAuthUser);
   const dispatch = useAppDispatch();
   const confirm = useConfirm();
-  const commentStatus = useAppSelector(selectCommentStatus);
 
   const { post, item } = props;
   function handleComment() {
