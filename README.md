@@ -4,7 +4,7 @@
 
 ## MySQL Database Set up
 
-**Friendly note: ** Since I could not find a remote database hosting for MySQL, could you please take time to create a database to run the application
+> _Friendly note:_ Since I could not find a remote database hosting for MySQL, could you please take time to create a database to run the application
 
 - MySQL Server: You can choose a preferred localhost MySQL server such as MySQL Workbench, or phpMyAdmin
 - MySQL version: 8.0
@@ -39,7 +39,7 @@
 
 ## Run the app
 
-**Note: ** As there is no fixed database for the app, a function is defined in the backend to insert data into the database every time it runs. You can choose between 2 ways to prevent errors before launching backend
+> _Note:_ As there is no fixed database for the app, a function is defined in the backend to insert data into the database every time it runs. You can choose between 2 ways to prevent errors before launching backend
 
 a. Drop the `gomovieforumtest` database and Create it again every time prior to running the app
 b. Run the app freely in the first time. In the following runs after you terminating the backend, locate to the `movie-backend/main.go` scroll down until you see the function `initializeData()` and its application in the Connect() function, comment both of them.
