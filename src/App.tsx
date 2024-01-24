@@ -1,7 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Root from "./pages/Root.tsx";
-import PostDetailPage from "./pages/PostDetailPage.tsx";
-import HomePage from "./pages/HomePage.tsx";
 import { Badge, Stack, Button, Snackbar, Alert } from "@mui/material";
 import MainHeader from "./components/Navigation/MainHeader.tsx";
 import RouteIcon from "./components/Navigation/RouteIcon.tsx";
@@ -20,6 +18,8 @@ import {
 } from "./store/auth-slice.ts";
 import RegisterPage from "./pages/RegisterPage.tsx";
 import CreatePostModal from "./components/Post/CreatePostModal.tsx";
+import HomePage from "./pages/HomePage.tsx";
+import PostDetailPage from "./pages/PostDetailPage.tsx";
 
 const Header: FunctionComponent = () => {
   const dispatch = useAppDispatch();
