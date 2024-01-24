@@ -83,7 +83,7 @@ export default function RegisterPage() {
         <Typography variant="h3">Sign up</Typography>
         <Stack direction="row" spacing={1}>
           <Typography>Already have an account?</Typography>
-          <Link href="/register">
+          <Link href="/login">
             <Typography
               sx={{ color: "primary.main", textDecoration: "underline" }}
             >

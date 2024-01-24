@@ -1,4 +1,8 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  RouterProvider,
+  createBrowserRouter,
+  useNavigate,
+} from "react-router-dom";
 import Root from "./pages/Root.tsx";
 import { Badge, Stack, Button, Snackbar, Alert } from "@mui/material";
 import MainHeader from "./components/Navigation/MainHeader.tsx";
@@ -27,6 +31,7 @@ const Header: FunctionComponent = () => {
   const authUser = useAppSelector(getAuthUser) as UserItem;
   const [open, setOpen] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (authStatus == "idle") {
@@ -50,11 +55,15 @@ const Header: FunctionComponent = () => {
     setAlert(false);
   };
 
+  const handleToHome = () => {
+    navigate("/");
+  };
+
   return (
     <MainHeader>
       {authStatus === "succeeded" ? (
         <>
-          <RouteIcon tooltip="Home" onClick={() => {}}>
+          <RouteIcon tooltip="Home" onClick={handleToHome}>
             <HomeRoundedIcon fontSize="large" />
           </RouteIcon>
           <RouteIcon tooltip="Create post" onClick={handleClickOpen}>

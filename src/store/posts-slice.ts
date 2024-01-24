@@ -57,7 +57,7 @@ type CreatePostReturnType = {
 };
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const response = await get("http://localhost:3000/api/posts");
+  const response = await get(`${END_POINT}/api/posts`);
 
   const data = (await response.json()) as RawDataPost[];
 

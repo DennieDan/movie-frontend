@@ -8,7 +8,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import MyPagination from "../components/UI/MyPagination.tsx";
 import SortDropDown from "../components/UI/SortDropDown.tsx";
 import PostItem from "../components/UI/PostItem.tsx";
 import { useAppDispatch, useAppSelector } from "../store/hooks.ts";
@@ -52,7 +51,6 @@ export default function Homepage() {
           alignItems="center"
           justifyContent="space-between"
         >
-          <MyPagination pages={5} />
           <SortDropDown onChange={handleChange} value={sortBy}>
             <MenuItem value="start-date">Start Date</MenuItem>
             <MenuItem value="movie">Movie</MenuItem>
