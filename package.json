@@ -26,8 +26,8 @@
   },
   "devDependencies": {
     "@hookform/devtools": "^4.3.1",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
+    "@types/react": "^17.0.75",
+    "@types/react-dom": "^17.0.25",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
     "@vitejs/plugin-react": "^4.2.1",

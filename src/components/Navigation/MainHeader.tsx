@@ -1,9 +1,9 @@
 import { Box, Button, Typography } from "@mui/material";
 
-import { PropsWithChildren } from "react";
+import { ReactNode } from "react";
 import SearchBar from "../UI/SearchBar.tsx";
 
-type MainHeaderProps = PropsWithChildren;
+type MainHeaderProps = { children: ReactNode };
 
 export default function MainHeader({ children }: MainHeaderProps) {
   return (
