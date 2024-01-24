@@ -41,14 +41,14 @@
 
 > _Note:_ As there is no fixed database for the app, a function is defined in the backend to insert data into the database every time it runs. You can choose between 2 ways to prevent errors before launching backend
 
-      a. Drop the `gomovieforumtest` database and Create it again every time prior to running the app
-      b. Run the app freely in the first time. In the following runs after you terminating the backend, locate to the `movie-backend/main.go` scroll down until you see the `func initializeData()` and its application in the `func Connect()`, comment both of them.
+- 1.  Drop the `gomovieforumtest` database and Create it again every time prior to running the app
+- 2.  Run the app freely in the first time. In the following runs after you terminating the backend, locate to the `movie-backend/main.go` scroll down until you see the `func initializeData()` and its application in the `func Connect()`, comment both of them.
 
-1. Locate to the root directory of back-end folder and type in the terminal
-   `go run main.go`
-2. Locate to the root directory of the front-end folder and type in the terminal
-   `npm run dev`
-3. Go to the browser and navigate to `http://localhost:5173/` or as indicated in your terminal
+3.  Locate to the root directory of back-end folder and type in the terminal
+    `go run main.go`
+4.  Locate to the root directory of the front-end folder and type in the terminal
+    `npm run dev`
+5.  Go to the browser and navigate to `http://localhost:5173/` or as indicated in your terminal
 
 ## Testing Accounts
 
