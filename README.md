@@ -1,30 +1,82 @@
-# React + TypeScript + Vite
+# SET UP GUIDE FOR MOVIE FORUM APP
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Written by: Dinh Duy Linh Dan
 
-Currently, two official plugins are available:
+## 1. MySQL Database Set up
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Friendly note: ** Since I could not find a remote database hosting for MySQL, could you please take time to create a database to run the application
 
-## Expanding the ESLint configuration
+- MySQL Server: You can choose a preferred localhost MySQL server such as MySQL Workbench, or phpMyAdmin
+- MySQL version: 8.0
+- Create a database call `gomovieforumtest`
+- Remember to take note of the following information of your database: `username, password, address of the localhost`
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+---
 
-- Configure the top-level `parserOptions` property like this:
+## 2. Back-end set up
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+- Clone the code from the front-end repository [DennieDan/movie-backend](https://github.com/DennieDan/movie-backend)
+- Navigate to the root directory of the folder
+- Navigate to folder `.env` and replace the information of your database into the Environment Variables
+- Go and get the following packages if error appears on the screen
+  ````go get -u gorm.io/gorm
+  go get -u gorm.io/driver/mysql
+  go get github.com/gofiber/fiber/v2
+  go get github.com/joho/godotenv
+  go get golang.org/x/crypto/bcrypt
+  go get -u github.com/golang-jwt/jwt/v5```
+  ````
+
+---
+
+## 3. Front-end set up
+
+1. Clone the code from the front-end repository [DennieDan/movie-frontend](https://github.com/DennieDan/movie-frontend)
+2. Open the local repository with Visual Studio Code
+3. Install the packages by
+   `` npm install` or `npm install --force ``
+4. Test by continue typing `npm run dev`
+   Notice this line (Line 1) in the terminal
+   `➜  Local:   http://localhost:5173/`
+5. Locate to the Back-end repository: `movie-backend/main.go`
+6. Find the line `AllowOrigins:     "http://localhost:5173"` and modify accordingly to the address in (Line 1) pointed at #4
+
+---
+
+## 4. Run the app
+
+**Note: ** As there is no fixed database for the app, a function is defined in the backend to insert data into the database every time it runs. You can choose between 2 ways to prevent errors before launching backend
+
+- 1. Drop the `gomovieforumtest` database and Create it again every time prior to running the app
+- 2. Run the app freely in the first time. In the following runs after you terminating the backend, locate to the `movie-backend/main.go` scroll down until you see the function `initializeData()` and its application in the Connect() function, comment both of them.
+
+1. Locate to the root directory of back-end folder and type in the terminal
+   `go run main.go`
+2. Locate to the root directory of the front-end folder and type in the terminal
+   `npm run dev`
+3. Go to the browser and navigate to `http://localhost:5173/` or as indicated in your terminal
+
+---
+
+## Testing Accounts
+
+```json[
+{
+   "id": 1,
+   "username":"User1",
+   "password":"password111",
+   "email": "dedeui@gmail.com",
+},
+{
+   "id": 2,
+   "username":"User2",
+   "password":"huhuhucry321",
+   "email": "hurrayyygoing@hotmail.com",
+},
+{
+   "id": 3,
+   "username":"User3",
+   "password":"thisisapassword",
+   "email": "funand4587@outlook.com",
+}]
 ```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list

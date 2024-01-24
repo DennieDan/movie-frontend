@@ -43,7 +43,7 @@ type CommentsProps = {
 
 export default function Comments({ item }: CommentsProps) {
   // const comments: CommentItemType[] = item.comments;
-  const comments: CommentItemType[] = useAppSelector(selectCommentByPostId);
+  const comments = useAppSelector(selectCommentByPostId) as CommentItemType[];
   const commentStatus = useAppSelector(selectCommentStatus);
   const userListStatus = useAppSelector(selectUserListStatus);
   const authUser = useAppSelector(getAuthUser) as UserItem;
@@ -59,57 +59,64 @@ export default function Comments({ item }: CommentsProps) {
     }
   }, [commentStatus, dispatch, item.id, authStatus]);
 
-  return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="left"
-      justifyContent="center"
-      sx={{
-        backgroundColor: "white",
-        borderRadius: "5px",
-        padding: "10px 10px 10px 80px",
-      }}
-    >
-      {authUser ? (
-        <>
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            spacing={0.5}
-          >
-            <Typography variant="body1">Comment as</Typography>
-            <Typography variant="subtitle1">{authUser.username}</Typography>
-          </Stack>
-          <CommentInput post={item} />
-        </>
-      ) : (
-        <Box display="flex" justifyContent="flex-start">
-          <Button variant="outlined" href="/login">
-            Add a comment
-          </Button>
-        </Box>
-      )}
+  console.log("comments");
 
-      <hr style={{ width: "100%", marginTop: "50px" }}></hr>
-      <Stack direction="column" spacing={5}>
-        {commentStatus === "loading" || userListStatus === "loading" ? (
-          <CircularProgress />
+  // console.log(comments && comments[0].content);
+
+  return (
+    comments && (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="left"
+        justifyContent="center"
+        sx={{
+          backgroundColor: "white",
+          borderRadius: "5px",
+          padding: "10px 10px 10px 80px",
+        }}
+      >
+        {authUser ? (
+          <>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="flex-start"
+              spacing={0.5}
+            >
+              <Typography variant="body1">Comment as</Typography>
+              <Typography variant="subtitle1">{authUser.username}</Typography>
+            </Stack>
+            <CommentInput post={item} />
+          </>
         ) : (
-          //   comments.map((comment) => (
-          //     <CommentItem key={comment.id} post={item} item={comment} />
-          //   ))
-          // )
-          comments.map(
-            (comment) =>
-              comment.response_id === null && (
-                <CommentItem key={comment.id} post={item} item={comment} />
-              )
-          )
+          <Box display="flex" justifyContent="flex-start">
+            <Button variant="outlined" href="/login">
+              Add a comment
+            </Button>
+          </Box>
         )}
-      </Stack>
-    </Box>
+
+        <hr style={{ width: "100%", marginTop: "50px" }}></hr>
+        <Stack direction="column" spacing={5}>
+          {commentStatus === "loading" || userListStatus === "loading" ? (
+            <CircularProgress />
+          ) : (
+            //   comments.map((comment) => (
+            //     <CommentItem key={comment.id} post={item} item={comment} />
+            //   ))
+            // )
+            comments.map(
+              (comment) =>
+                comment.response_id === null && (
+                  // <Box>{comment.content}</Box>
+                  <CommentItem key={comment.id} post={item} item={comment} />
+                )
+            )
+          )}
+        </Stack>
+      </Box>
+    )
   );
 }
 
@@ -149,9 +156,6 @@ function CommentItem({ post, item }: CommentItemProps) {
     (user) => user.id === item.user_id
   );
 
-  console.log("CommentItem");
-  console.log("comment " + userListStatus);
-  // const username = commentAuthor.username;
   const replies = comments.filter((c) => c.response_id === item.id);
 
   const votes = item.comment_votes.reduce((acc, b) => acc + b.Score, 0);
@@ -175,8 +179,7 @@ function CommentItem({ post, item }: CommentItemProps) {
   }
 
   return (
-    commentAuthor &&
-    authUser && (
+    commentAuthor && (
       <Box
         sx={{ padding: "0 0 0 10px", borderLeft: 3, borderColor: "grey.400" }}
       >
@@ -210,7 +213,7 @@ function CommentItem({ post, item }: CommentItemProps) {
             >
               Reply
             </Button>
-            {authUser.id === item.user_id && (
+            {authUser && authUser.id === item.user_id && (
               <Button
                 id="edit-button"
                 startIcon={<ModeEditOutlineOutlinedIcon />}
