@@ -15,6 +15,7 @@ import {
   getCommentByPostId,
   createComment,
   editComment,
+  deleteComment,
 } from "../../store/comments-slice.ts";
 import { useAppDispatch, useAppSelector } from "../../store/hooks.ts";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
@@ -34,6 +35,7 @@ import {
 } from "../../store/auth-slice.ts";
 import CommentVote from "./CommentVote.tsx";
 import { useNavigate } from "react-router-dom";
+import { useConfirm } from "material-ui-confirm";
 
 type CommentsProps = {
   item: PostItemType;
@@ -173,7 +175,8 @@ function CommentItem({ post, item }: CommentItemProps) {
   }
 
   return (
-    commentAuthor && (
+    commentAuthor &&
+    authUser && (
       <Box
         sx={{ padding: "0 0 0 10px", borderLeft: 3, borderColor: "grey.400" }}
       >
@@ -276,6 +279,8 @@ function CommentInput(props: CommentInputProps) {
   );
   const authUser = useAppSelector(getAuthUser);
   const dispatch = useAppDispatch();
+  const confirm = useConfirm();
+  const commentStatus = useAppSelector(selectCommentStatus);
 
   const { post, item } = props;
   function handleComment() {
@@ -315,6 +320,10 @@ function CommentInput(props: CommentInputProps) {
   function handleDeleteComment() {
     if (isEditInputProps(props)) {
       const { comment } = props;
+      confirm({
+        description:
+          "This will permanently delete your comment and its responses.",
+      }).then(() => dispatch(deleteComment(comment.id)));
     }
   }
 

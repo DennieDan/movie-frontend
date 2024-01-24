@@ -114,6 +114,7 @@ export const editComment = createAsyncThunk(
 export const deleteComment = createAsyncThunk(
   "comments/deleteComment",
   async (comment_id: number) => {
+    console.log("deleting");
     const response = await fetch(
       `${END_POINT}/api/delete_comment/${comment_id}`,
       {
@@ -122,7 +123,7 @@ export const deleteComment = createAsyncThunk(
     );
 
     const data = await response.json();
-
+    console.log(data);
     return data;
   }
 );
@@ -179,7 +180,7 @@ export const commentsSlice = createSlice({
       })
       .addCase(getCommentByPostId.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.items = action.payload;
+        state.items = action.payload.reverse();
       })
       .addCase(getCommentByPostId.rejected, (state, action) => {
         state.status = "failed";
@@ -196,6 +197,18 @@ export const commentsSlice = createSlice({
       })
       .addCase(editComment.fulfilled, (state) => {
         state.status = "idle";
+      })
+      .addCase(deleteComment.pending, (state) => {
+        state.status = "loading";
+        console.log("loading");
+      })
+      .addCase(deleteComment.rejected, (state) => {
+        state.status = "idle";
+        console.log("failed");
+      })
+      .addCase(deleteComment.fulfilled, (state) => {
+        state.status = "idle";
+        console.log("deleted");
       });
   },
 });

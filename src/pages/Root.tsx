@@ -2,6 +2,7 @@ import { Stack, Theme, ThemeProvider, createTheme } from "@mui/material";
 import { Provider } from "react-redux";
 import { Outlet } from "react-router-dom";
 import { store } from "../store/store.ts";
+import { ConfirmProvider } from "material-ui-confirm";
 
 declare module "@mui/styles/defaultTheme" {
   interface DefaultTheme extends Theme {}
@@ -47,9 +48,16 @@ export default function Root() {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <Stack width="100%" direction="column" spacing={5} alignItems="center">
-          <Outlet />
-        </Stack>
+        <ConfirmProvider>
+          <Stack
+            width="100%"
+            direction="column"
+            spacing={5}
+            alignItems="center"
+          >
+            <Outlet />
+          </Stack>
+        </ConfirmProvider>
       </ThemeProvider>
     </Provider>
   );
