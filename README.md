@@ -17,13 +17,13 @@
 - Navigate to the root directory of the folder
 - Navigate to folder `.env` and replace the information of your database into the Environment Variables
 - Go and get the following packages if error appears on the screen
-  ````go get -u gorm.io/gorm
+  ```go get -u gorm.io/gorm
   go get -u gorm.io/driver/mysql
   go get github.com/gofiber/fiber/v2
   go get github.com/joho/godotenv
   go get golang.org/x/crypto/bcrypt
-  go get -u github.com/golang-jwt/jwt/v5```
-  ````
+  go get -u github.com/golang-jwt/jwt/v5
+  ```
 
 ## Front-end set up
 
